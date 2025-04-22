@@ -34,22 +34,22 @@ function stopwatch() {
 }
 
 function start() {
+  playBeep();
   if (timer !== null) clearInterval(timer);
   timer = setInterval(stopwatch, 1000);
-  playBeep();
 }
 
 function stopTime() {
-  clearInterval(timer);
   playBeep();
+  clearInterval(timer);
 }
 
 function reset() {
+  playBeep();
   clearInterval(timer);
   [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
   laps.innerHTML = "";
   updateDisplay();
-  playBeep();
 }
 
 let lapsCount = 0;
@@ -82,3 +82,29 @@ startBtn.addEventListener("click", start);
 stopBtn.addEventListener("click", stopTime);
 resetBtn.addEventListener("click", reset);
 lapBtn.addEventListener("click", lap);
+
+function rain() {
+  const bgImage = document.getElementById("background");
+  bgImage.onload = function () {
+    var engine = new RainyDay({
+      image: this,
+      fps: 30,
+      parentElement: document.body,
+      blur: 0,
+    });
+    engine.rain(
+      [
+        [3, 3, 0.88],
+        [5, 5, 0.9],
+        [6, 2, 1],
+      ],
+      100
+    );
+  };
+  bgImage.crossOrigin = "anonymous";
+  bgImage.src = "/src/assets/rainy-window.png";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  rain();
+});

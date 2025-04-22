@@ -1,4 +1,11 @@
 @import "tailwindcss";
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
 /* Buttons */
 .btn-primary {
   background-color: #3b82f6; /* Tailwind blue-500 */
