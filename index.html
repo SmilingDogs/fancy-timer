@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fancy Stopwatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/src/styles.css" rel="stylesheet" />
+  </head>
+  <body
+    class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4"
+  >
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+      <div
+        id="display"
+        class="text-9xl font-mono text-blue-600 mb-6 animate-pulse"
+      >
+        00:00:00
+      </div>
+
+      <div class="flex justify-center space-x-4 mb-6">
+        <button id="startBtn" class="btn-primary">Start</button>
+        <button id="stopBtn" class="btn-secondary">Stop</button>
+        <button id="resetBtn" class="btn-danger">Reset</button>
+        <button id="lapBtn" class="btn-primary">Lap</button>
+      </div>
+
+      <div class="text-left max-h-48 overflow-y-auto">
+        <ul id="laps" class="text-gray-600 space-y-2"></ul>
+      </div>
+
+      <audio
+        id="beep"
+        src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+      ></audio>
+    </div>
+
+    <script src="src/main.js"></script>
+  </body>
+</html>
