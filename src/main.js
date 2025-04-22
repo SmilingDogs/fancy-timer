@@ -84,25 +84,9 @@ resetBtn.addEventListener("click", reset);
 lapBtn.addEventListener("click", lap);
 
 function rain() {
-  const bgImage = document.getElementById("background");
-  bgImage.onload = function () {
-    var engine = new RainyDay({
-      image: this,
-      fps: 30,
-      parentElement: document.body,
-      blur: 0,
-    });
-    engine.rain(
-      [
-        [3, 3, 0.88],
-        [5, 5, 0.9],
-        [6, 2, 1],
-      ],
-      100
-    );
-  };
-  bgImage.crossOrigin = "anonymous";
-  bgImage.src = "/src/assets/rainy-window.png";
+  var rainyDay = new RainyDay({
+    image: "background",
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
