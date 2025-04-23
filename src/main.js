@@ -111,6 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     display.classList.remove(...colorClasses);
     display.classList.add(e.target.value);
+    laps.classList.remove(...colorClasses);
+    laps.classList.add(e.target.value);
 
     buttons.forEach((b) => {
       b.classList.remove(...colorClasses);
