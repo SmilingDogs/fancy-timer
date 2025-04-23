@@ -107,18 +107,20 @@ function startRain() {
 document.addEventListener("DOMContentLoaded", () => {
   colorSelector.addEventListener("change", (e) => {
     //prettier-ignore
-    const colorClasses = ["text-black", "text-white", "text-yellow-500", "text-blue-500", "text-red-500"]
+    const colorClasses = ["text-black", "text-white", "text-yellow-500", "text-blue-500", "text-red-500"];
+    let activeColor = e.target.value;
 
     display.classList.remove(...colorClasses);
-    display.classList.add(e.target.value);
+    display.classList.add(activeColor);
+
     laps.classList.remove(...colorClasses);
-    laps.classList.add(e.target.value);
+    laps.classList.add(activeColor);
 
     buttons.forEach((b) => {
       b.classList.remove(...colorClasses);
     });
     buttons.forEach((b) => {
-      b.classList.add(e.target.value);
+      b.classList.add(activeColor);
     });
   });
 
