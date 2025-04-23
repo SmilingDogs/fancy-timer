@@ -1,5 +1,6 @@
 // Grab elements
 const display = document.getElementById("display");
+const colorSelector = document.getElementById("colorSelector");
 const laps = document.getElementById("laps");
 const beep = document.getElementById("beep");
 
@@ -7,6 +8,7 @@ const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 const resetBtn = document.getElementById("resetBtn");
 const lapBtn = document.getElementById("lapBtn");
+const buttons = document.querySelectorAll("button");
 
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
@@ -91,4 +93,57 @@ function rain() {
 
 document.addEventListener("DOMContentLoaded", () => {
   rain();
+
+  colorSelector.addEventListener("change", (e) => {
+    display.classList.remove(
+      "text-black",
+      "text-white",
+      "text-yellow-500",
+      "text-blue-500",
+      "text-red-500"
+    );
+    display.classList.add(e.target.value);
+    buttons.forEach((b) => {
+      b.classList.remove(
+        "text-black",
+        "text-white",
+        "text-yellow-500",
+        "text-blue-500",
+        "text-red-500"
+      );
+    });
+    buttons.forEach((b) => {
+      b.classList.add(e.target.value);
+    });
+  });
+
+  // NEW: Background switcher using event delegation
+  const thumbnailsContainer = document.querySelector(".fixed.bottom-4.left-4");
+
+  if (thumbnailsContainer) {
+    thumbnailsContainer.addEventListener("click", (e) => {
+      const target = e.target;
+      if (target.tagName === "IMG" && target.dataset.bg) {
+        const newBg = target.dataset.bg;
+        const background = document.getElementById("background");
+
+        // Instead of replacing all classes, just update the background image
+        background.style.backgroundImage = `url(/${newBg})`;
+
+        // Ensure all necessary classes are present
+        const requiredClasses = [
+          "fixed",
+          "inset-0",
+          "bg-no-repeat",
+          "bg-cover",
+          "bg-center",
+          "transition-all",
+          "duration-500",
+          "ease-in-out",
+        ];
+
+        background.classList.add(...requiredClasses);
+      }
+    });
+  }
 });

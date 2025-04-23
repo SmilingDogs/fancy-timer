@@ -10,7 +10,7 @@
   <body class="bg-gray-100 min-h-screen relative">
     <!-- Background container -->
     <div
-      class="fixed inset-0 bg-no-repeat bg-cover bg-[url(/src/assets/desert.jpg)]"
+      class="fixed inset-0 bg-no-repeat bg-cover bg-[url(/src/assets/flowingforms2.jpg)]"
       id="background"
     ></div>
 
@@ -19,31 +19,90 @@
       class="relative z-500 flex flex-col items-center justify-center min-h-screen p-4"
     >
       <div
-        class="bg-transparent bg-opacity-80 p-8 rounded-lg shadow-lg w-full max-w-md text-center"
+        class="bg-transparent p-8 rounded-lg shadow-xl w-full max-w-md text-center"
       >
-        <div
-          id="display"
-          class="text-7xl font-mono text-zinc-950 mb-6 animate-pulse"
-        >
+        <div id="display" class="text-7xl font-mono mb-6 animate-pulse">
           00:00:00
         </div>
 
         <div class="flex justify-center space-x-4 mb-6">
-          <button id="startBtn" class="btn-primary">Start</button>
-          <button id="stopBtn" class="btn-secondary">Stop</button>
-          <button id="resetBtn" class="btn-danger">Reset</button>
-          <button id="lapBtn" class="btn-primary">Lap</button>
+          <button id="startBtn" class="btn-primary bg-transparent text-black">
+            Start
+          </button>
+          <button id="stopBtn" class="btn-secondary bg-transparent text-black">
+            Stop
+          </button>
+          <button id="resetBtn" class="btn-danger bg-transparent text-black">
+            Reset
+          </button>
+          <button id="lapBtn" class="btn-primary bg-transparent text-black">
+            Lap
+          </button>
         </div>
 
-        <div class="text-left max-h-48 overflow-y-auto">
-          <ul id="laps" class="text-gray-600 space-y-2"></ul>
+        <div class="text-left max-h-30 overflow-y-auto">
+          <ul id="laps" class="text-600 space-y-2"></ul>
         </div>
-
+        <div class="flex justify-end mb-4 mt-2">
+          <select
+            id="colorSelector"
+            class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-white border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          >
+            <option value="text-black">Black</option>
+            <option value="text-white">White</option>
+            <option value="text-yellow-500">Yellow</option>
+            <option value="text-blue-500">Blue</option>
+            <option value="text-red-500">Red</option>
+          </select>
+        </div>
         <audio
           id="beep"
           src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
         ></audio>
       </div>
+    </div>
+    <div class="fixed bottom-4 left-4 flex space-x-2 z-500">
+      <img
+        src="src/assets/desert.jpg"
+        data-bg="src/assets/desert.jpg"
+        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
+        alt="Background 1"
+      />
+
+      <img
+        src="src/assets/mountains.jpg"
+        data-bg="src/assets/mountains.jpg"
+        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
+        alt="Background 2"
+      />
+
+      <img
+        src="src/assets/rainy-window.png"
+        data-bg="src/assets/rainy-window.png"
+        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
+        alt="Background 3"
+      />
+
+      <img
+        src="src/assets/slovenia_lake.png"
+        data-bg="src/assets/slovenia_lake.png"
+        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
+        alt="Background 4"
+      />
+
+      <img
+        src="src/assets/stars.jpg"
+        data-bg="src/assets/stars.jpg"
+        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
+        alt="Background 5"
+      />
+
+      <img
+        src="src/assets/flowingforms2.jpg"
+        data-bg="src/assets/flowingforms2.jpg"
+        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
+        alt="Background 6"
+      />
     </div>
 
     <script src="src/main.js"></script>
