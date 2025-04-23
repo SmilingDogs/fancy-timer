@@ -91,8 +91,14 @@ function rain() {
   });
 }
 
+function cleanupRainCanvases() {
+  const rainCanvases = document.querySelectorAll("canvas");
+  rainCanvases.forEach((canvas) => canvas.remove());
+}
+
 function startRain() {
-  // Add small delay to ensure background is fully rendered
+  cleanupRainCanvases();
+
   setTimeout(() => {
     rain();
   }, 100);
@@ -122,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // NEW: Background switcher using event delegation
   const thumbnailsContainer = document.querySelector(".fixed.bottom-4.left-4");
 
   if (thumbnailsContainer) {
@@ -154,6 +159,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Start rain effect after initial page load
   startRain();
 });
