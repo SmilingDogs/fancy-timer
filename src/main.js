@@ -92,8 +92,6 @@ function rain() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  rain();
-
   colorSelector.addEventListener("change", (e) => {
     display.classList.remove(
       "text-black",
@@ -127,23 +125,25 @@ document.addEventListener("DOMContentLoaded", () => {
         const newBg = target.dataset.bg;
         const background = document.getElementById("background");
 
-        // Instead of replacing all classes, just update the background image
-        background.style.backgroundImage = `url(/${newBg})`;
+        const testImage = new Image();
+        testImage.onload = () => {
+          background.className = "fixed inset-0 bg-no-repeat bg-cover";
+          background.style.cssText = `
+            background-image: url('${newBg}');
+            z-index: 100;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+          `;
+        };
 
-        // Ensure all necessary classes are present
-        const requiredClasses = [
-          "fixed",
-          "inset-0",
-          "bg-no-repeat",
-          "bg-cover",
-          "bg-center",
-          "transition-all",
-          "duration-500",
-          "ease-in-out",
-        ];
-
-        background.classList.add(...requiredClasses);
+        testImage.src = `${newBg}?t=${Date.now()}`;
       }
     });
   }
+  rain();
 });
