@@ -91,6 +91,13 @@ function rain() {
   });
 }
 
+function startRain() {
+  // Add small delay to ensure background is fully rendered
+  setTimeout(() => {
+    rain();
+  }, 100);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   colorSelector.addEventListener("change", (e) => {
     display.classList.remove(
@@ -139,11 +146,14 @@ document.addEventListener("DOMContentLoaded", () => {
             background-size: cover;
             background-position: center;
           `;
+          startRain();
         };
 
         testImage.src = `${newBg}?t=${Date.now()}`;
       }
     });
   }
-  rain();
+
+  // Start rain effect after initial page load
+  startRain();
 });
