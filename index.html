@@ -17,43 +17,44 @@
 
     <!-- Main content container -->
     <div
-      class="relative z-500 flex flex-col items-center justify-center min-h-screen p-4"
+      class="relative z-500 flex items-center justify-center min-h-screen p-4"
     >
-      <!-- Toggle aligned to the right of the timer container -->
-      <div class="w-full max-w-md flex justify-end pr-6">
-        <label class="relative inline-block w-32 h-12">
-          <input type="checkbox" id="modeToggle" class="peer hidden" />
-
-          <!-- Background -->
-          <span
-            class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
-          ></span>
-          <!-- Toggle circle -->
-          <span
-            class="absolute top-1 left-1 w-10 h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-20"
-          ></span>
-          <!-- TIMER text -->
-          <span
-            class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10"
-          >
-            TIMER
-          </span>
-          <!-- COUNTDOWN text -->
-          <span
-            class="absolute left-2 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10"
-          >
-            COUNTDOWN
-          </span>
-        </label>
-      </div>
-
+      <!-- Stopwatch/Timer container -->
       <div
-        class="bg-transparent p-8 rounded-lg shadow-xl w-full max-w-md text-center"
+        class="bg-transparent p-8 pt-4 rounded-lg shadow-xl w-full max-w-md text-center"
       >
+        <!-- Mode Toggle button aligned to the right -->
+        <div class="w-full max-w-md flex justify-end pb-4">
+          <label class="relative inline-block w-32 h-12">
+            <input type="checkbox" id="modeToggle" class="peer hidden" />
+
+            <!-- Background -->
+            <span
+              class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
+            ></span>
+            <!-- Toggle circle -->
+            <span
+              class="absolute top-1 left-1 w-10 h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-20"
+            ></span>
+            <!-- TIMER text -->
+            <span
+              class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10"
+            >
+              TIMER
+            </span>
+            <!-- COUNTDOWN text -->
+            <span
+              class="absolute left-2 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10"
+            >
+              COUNTDOWN
+            </span>
+          </label>
+        </div>
+        <!-- Timer Display -->
         <div id="display" class="text-7xl font-mono mb-6 animate-pulse">
           00:00:00
         </div>
-
+        <!-- Timer control buttons -->
         <div class="flex justify-center space-x-4 mb-6">
           <button id="startBtn" class="btn-primary bg-transparent text-black">
             Start
@@ -68,14 +69,15 @@
             Lap
           </button>
         </div>
-
+        <!-- Laps recordings -->
         <div class="text-left max-h-30 overflow-y-auto">
           <ul id="laps" class="text-600 space-y-2"></ul>
         </div>
+        <!-- Timer colors selector -->
         <div class="flex justify-end mb-4 mt-2">
           <select
             id="colorSelector"
-            class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-white border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
           >
             <option value="text-black">Black</option>
             <option value="text-white">White</option>
@@ -88,6 +90,45 @@
           id="beep"
           src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
         ></audio>
+      </div>
+      <!-- Countdown Settings Panel -->
+      <div
+        id="countdownPanel"
+        class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-4"
+      >
+        <div class="flex flex-col items-center">
+          <div class="text-xs font-bold text-gray-700">Hours</div>
+          <input
+            type="range"
+            min="0"
+            max="24"
+            value="0"
+            class="vertical-slider"
+            id="hourSlider"
+          />
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="text-xs font-bold text-gray-700">Minutes</div>
+          <input
+            type="range"
+            min="0"
+            max="60"
+            value="0"
+            class="vertical-slider"
+            id="minuteSlider"
+          />
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="text-xs font-bold text-gray-700">Seconds</div>
+          <input
+            type="range"
+            min="1"
+            max="60"
+            value="1"
+            class="vertical-slider"
+            id="secondSlider"
+          />
+        </div>
       </div>
     </div>
     <div class="fixed bottom-4 left-4 flex space-x-2 z-500">

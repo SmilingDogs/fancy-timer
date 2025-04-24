@@ -9,10 +9,17 @@ const stopBtn = document.getElementById("stopBtn");
 const resetBtn = document.getElementById("resetBtn");
 const lapBtn = document.getElementById("lapBtn");
 const buttons = document.querySelectorAll("button");
+const modeToggle = document.getElementById("modeToggle");
+const countdownPanel = document.getElementById("countdownPanel");
+const hourSlider = document.getElementById("hourSlider");
+const minuteSlider = document.getElementById("minuteSlider");
+const secondSlider = document.getElementById("secondSlider");
 
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
+let lapsCount = 0;
+let isCountdown = false;
 
 // Functions
 function updateDisplay() {
@@ -35,10 +42,41 @@ function stopwatch() {
   updateDisplay();
 }
 
+function countdown() {
+  if (hours === 0 && minutes === 0 && seconds === 0) {
+    stopTime();
+    display.textContent = "Time is up!";
+    display.style.fontSize = "48px";
+    display.style.fontWeight = "600";
+    const audio = new Audio(
+      "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
+    );
+    audio.play();
+    return;
+  }
+
+  if (seconds > 0) {
+    seconds--;
+  } else if (minutes > 0) {
+    minutes--;
+    seconds = 59;
+  } else if (hours > 0) {
+    hours--;
+    minutes = 59;
+    seconds = 59;
+  }
+  updateDisplay();
+}
+
 function start() {
   playBeep();
   if (timer !== null) clearInterval(timer);
-  timer = setInterval(stopwatch, 1000);
+  if (isCountdown) {
+    disableCountdownPanel();
+    timer = setInterval(countdown, 1000);
+  } else {
+    timer = setInterval(stopwatch, 1000);
+  }
 }
 
 function stopTime() {
@@ -52,9 +90,8 @@ function reset() {
   [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
   laps.innerHTML = "";
   updateDisplay();
+  if (isCountdown) enableCountdownPanel();
 }
-
-let lapsCount = 0;
 
 function lap() {
   if (seconds !== 0 || minutes !== 0 || hours !== 0) {
@@ -65,7 +102,6 @@ function lap() {
 
     laps.appendChild(li);
 
-    // Animate in
     setTimeout(() => {
       li.className = "opacity-100 translate-y-0 transition-all duration-500";
     }, 10);
@@ -79,16 +115,8 @@ function playBeep() {
   beep.play();
 }
 
-// Event Listeners
-startBtn.addEventListener("click", start);
-stopBtn.addEventListener("click", stopTime);
-resetBtn.addEventListener("click", reset);
-lapBtn.addEventListener("click", lap);
-
 function rain() {
-  var rainyDay = new RainyDay({
-    image: "background",
-  });
+  var rainyDay = new RainyDay({ image: "background" });
 }
 
 function cleanupRainCanvases() {
@@ -98,16 +126,42 @@ function cleanupRainCanvases() {
 
 function startRain() {
   cleanupRainCanvases();
-
-  setTimeout(() => {
-    rain();
-  }, 100);
+  setTimeout(() => rain(), 100);
 }
 
+function disableCountdownPanel() {
+  countdownPanel.classList.add("opacity-50", "pointer-events-none");
+  hourSlider.disabled = true;
+  minuteSlider.disabled = true;
+  secondSlider.disabled = true;
+}
+
+function enableCountdownPanel() {
+  countdownPanel.classList.remove("opacity-50", "pointer-events-none");
+  hourSlider.disabled = false;
+  minuteSlider.disabled = false;
+  secondSlider.disabled = false;
+  hourSlider.value = 1;
+  minuteSlider.value = 1;
+  secondSlider.value = 1;
+}
+
+// Event Listeners
+startBtn.addEventListener("click", start);
+stopBtn.addEventListener("click", stopTime);
+resetBtn.addEventListener("click", reset);
+lapBtn.addEventListener("click", lap);
+
+// Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
   colorSelector.addEventListener("change", (e) => {
-    //prettier-ignore
-    const colorClasses = ["text-black", "text-white", "text-yellow-500", "text-blue-500", "text-red-500"];
+    const colorClasses = [
+      "text-black",
+      "text-white",
+      "text-yellow-500",
+      "text-blue-500",
+      "text-red-500",
+    ];
     let activeColor = e.target.value;
 
     display.classList.remove(...colorClasses);
@@ -118,14 +172,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     buttons.forEach((b) => {
       b.classList.remove(...colorClasses);
-    });
-    buttons.forEach((b) => {
       b.classList.add(activeColor);
     });
   });
 
   const thumbnailsContainer = document.querySelector(".fixed.bottom-4.left-4");
-
   if (thumbnailsContainer) {
     thumbnailsContainer.addEventListener("click", (e) => {
       const target = e.target;
@@ -149,23 +200,55 @@ document.addEventListener("DOMContentLoaded", () => {
           `;
           startRain();
         };
-
         testImage.src = `${newBg}?t=${Date.now()}`;
       }
     });
   }
-
   startRain();
-});
 
-const modeToggle = document.getElementById("modeToggle");
+  // Mode toggle logic
+  modeToggle.addEventListener("change", () => {
+    isCountdown = modeToggle.checked;
+    if (isCountdown) {
+      countdownPanel.classList.remove(
+        "opacity-0",
+        "pointer-events-none",
+        "translate-y-4"
+      );
+      countdownPanel.classList.add(
+        "opacity-100",
+        "pointer-events-auto",
+        "translate-y-0"
+      );
+      lapBtn.classList.add("hidden");
+    } else {
+      countdownPanel.classList.remove(
+        "opacity-100",
+        "pointer-events-auto",
+        "translate-y-0"
+      );
+      countdownPanel.classList.add(
+        "opacity-0",
+        "pointer-events-none",
+        "translate-y-4"
+      );
+      lapBtn.classList.remove("hidden");
+    }
+  });
 
-modeToggle.addEventListener("change", () => {
-  if (modeToggle.checked) {
-    console.log("COUNTDOWN mode activated");
-    // You can trigger countdown logic here
-  } else {
-    console.log("TIMER mode activated");
-    // Back to stopwatch mode
-  }
+  // Slider bindings
+  hourSlider.addEventListener("input", () => {
+    hours = parseInt(hourSlider.value);
+    updateDisplay();
+  });
+
+  minuteSlider.addEventListener("input", () => {
+    minutes = parseInt(minuteSlider.value);
+    updateDisplay();
+  });
+
+  secondSlider.addEventListener("input", () => {
+    seconds = parseInt(secondSlider.value);
+    updateDisplay();
+  });
 });
