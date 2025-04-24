@@ -157,3 +157,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   startRain();
 });
+
+const modeToggle = document.getElementById("modeToggle");
+
+modeToggle.addEventListener("change", () => {
+  if (modeToggle.checked) {
+    console.log("COUNTDOWN mode activated");
+    // You can trigger countdown logic here
+  } else {
+    console.log("TIMER mode activated");
+    // Back to stopwatch mode
+  }
+});
