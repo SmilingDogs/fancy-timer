@@ -22,7 +22,7 @@ let timer = null;
 let lapsCount = 0;
 let isCountdown = false;
 let rainyDay = null; // Add this line to store rainyDay instance globally
-let currentBackgroundUrl = "src/assets/desert.jpg"; // Add this line to store current background
+let currentBackgroundUrl = "src/assets/desert.jpg"; // Add this line to store current background globally
 
 // Functions
 function updateDisplay() {
