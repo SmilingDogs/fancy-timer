@@ -69,7 +69,7 @@ function initParticles() {
           grab: {
             distance: 200,
             line_linked: {
-              opacity: 1,
+              opacity: 0.5,
             },
           },
           push: {
