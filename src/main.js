@@ -26,6 +26,62 @@ let rainyDay = null; // Add this line to store rainyDay instance globally
 let currentBackgroundUrl = "src/assets/desert.jpg"; // Add this line to store current background globally
 
 // Functions
+function initParticles() {
+  if (window.particlesJS) {
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 100, density: { enable: true, value_area: 800 } },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.7, random: false },
+        size: { value: 2, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#ffffff",
+          width: 1,
+          opacity: 0.2,
+        },
+        move: {
+          enable: true,
+          speed: 3,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false,
+        },
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: {
+            enable: true,
+            mode: "grab",
+          },
+          onclick: {
+            enable: true,
+            mode: "push",
+          },
+          resize: true,
+        },
+        modes: {
+          grab: {
+            distance: 200,
+            line_linked: {
+              opacity: 1,
+            },
+          },
+          push: {
+            particles_nb: 4,
+          },
+        },
+      },
+      retina_detect: true,
+    });
+  }
+}
+
 function updateDisplay() {
   const h = hours.toString().padStart(2, "0");
   const m = minutes.toString().padStart(2, "0");
@@ -176,6 +232,7 @@ lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
+  initParticles(); // Add this line before Swiper init
   // Swiper init
   const swiper = new Swiper(".swiper", {
     direction: "vertical",
@@ -202,6 +259,14 @@ document.addEventListener("DOMContentLoaded", () => {
           }, 800);
         } else {
           thumbnailsContainer.style.display = "none";
+          // Call immediately without delay
+          initParticles();
+        }
+      },
+      // Add initialization when slide is first loaded
+      init: function () {
+        if (this.activeIndex === 1) {
+          initParticles();
         }
       },
     },

@@ -207,11 +207,16 @@
         <!-- Second Slide - Global Times -->
         <div class="swiper-slide relative">
           <div
-            class="absolute inset-0 bg-no-repeat bg-cover bg-center"
+            id="particles-js"
+            class="absolute inset-0 w-full h-full"
+            style="z-index: 15"
+          ></div>
+          <div
+            class="absolute inset-0 bg-no-repeat bg-cover bg-center z-0"
             style="background-image: url('src/assets/earth.jpg')"
           ></div>
           <div
-            class="relative z-500 flex items-center justify-center min-h-screen p-4"
+            class="relative z-20 flex items-center justify-center min-h-screen p-4"
           >
             <div class="text-white text-center">
               <h1 class="text-6xl font-['Orbitron'] mb-6">Coming Soon</h1>
@@ -264,6 +269,7 @@
     <!-- Library scripts  -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/rainyday.js@0.1.7/dist/rainyday.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="src/main.js"></script>
   </body>
 </html>
