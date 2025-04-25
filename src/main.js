@@ -10,6 +10,7 @@ const resetBtn = document.getElementById("resetBtn");
 const lapBtn = document.getElementById("lapBtn");
 const buttons = document.querySelectorAll("button");
 const modeToggle = document.getElementById("modeToggle");
+const rainToggle = document.getElementById("rainToggle");
 const countdownPanel = document.getElementById("countdownPanel");
 const hourSlider = document.getElementById("hourSlider");
 const minuteSlider = document.getElementById("minuteSlider");
@@ -20,6 +21,7 @@ let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
 let lapsCount = 0;
 let isCountdown = false;
+let rainyDay = null; // Add this line to store rainyDay instance globally
 
 // Functions
 function updateDisplay() {
@@ -115,10 +117,14 @@ function playBeep() {
 }
 
 function rain() {
-  var rainyDay = new RainyDay({ image: "background" });
+  rainyDay = new RainyDay({ image: "background" });
 }
 
 function cleanupRainCanvases() {
+  if (rainyDay) {
+    rainyDay.destroy();
+    rainyDay = null;
+  }
   const rainCanvases = document.querySelectorAll("canvas");
   rainCanvases.forEach((canvas) => canvas.remove());
 }
@@ -188,14 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
           background.className = "fixed inset-0 bg-no-repeat bg-cover";
           background.style.cssText = `
             background-image: url('${newBg}');
-            z-index: 100;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
           `;
           startRain();
         };
@@ -233,6 +231,15 @@ document.addEventListener("DOMContentLoaded", () => {
         "translate-y-4"
       );
       lapBtn.classList.remove("hidden");
+    }
+  });
+  // Rain toggle logic
+
+  rainToggle.addEventListener("change", () => {
+    if (rainToggle.checked) {
+      cleanupRainCanvases();
+    } else {
+      startRain();
     }
   });
 
