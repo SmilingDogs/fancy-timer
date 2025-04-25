@@ -54,6 +54,8 @@ function countdown() {
       "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
     );
     audio.play();
+    startBtn.classList.add("hidden");
+    stopBtn.classList.add("hidden");
     return;
   }
 
@@ -91,6 +93,10 @@ function reset() {
   clearInterval(timer);
   [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
   laps.innerHTML = "";
+  display.classList.remove("text-[48px]", "font-semibold");
+  display.textContent = "00:00:00";
+  startBtn.classList.remove("hidden");
+  stopBtn.classList.remove("hidden");
   updateDisplay();
   if (isCountdown) enableCountdownPanel();
 }
