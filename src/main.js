@@ -22,6 +22,7 @@ let timer = null;
 let lapsCount = 0;
 let isCountdown = false;
 let rainyDay = null; // Add this line to store rainyDay instance globally
+let currentBackgroundUrl = "src/assets/desert.jpg"; // Add this line to store current background
 
 // Functions
 function updateDisplay() {
@@ -127,6 +128,15 @@ function cleanupRainCanvases() {
   }
   const rainCanvases = document.querySelectorAll("canvas");
   rainCanvases.forEach((canvas) => canvas.remove());
+
+  // Restore the background image
+  const background = document.getElementById("background");
+  background.style.cssText = `
+    background-image: url('${currentBackgroundUrl}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+`;
 }
 
 function startRain() {
@@ -187,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const target = e.target;
       if (target.tagName === "IMG" && target.dataset.bg) {
         const newBg = target.dataset.bg;
+        currentBackgroundUrl = newBg; // Store the new background URL
         const background = document.getElementById("background");
 
         const testImage = new Image();
@@ -198,6 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
           startRain();
         };
         testImage.src = `${newBg}?t=${Date.now()}`;
+      }
+      if (rainToggle.checked) {
+        rainToggle.checked = false;
       }
     });
   }
