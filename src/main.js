@@ -44,10 +44,9 @@ function stopwatch() {
 
 function countdown() {
   if (hours === 0 && minutes === 0 && seconds === 0) {
-    stopTime();
+    clearInterval(timer);
     display.textContent = "Time is up!";
-    display.style.fontSize = "48px";
-    display.style.fontWeight = "600";
+    display.classList.add("text-[48px]", "font-semibold");
     const audio = new Audio(
       "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
     );
@@ -224,6 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       countdownPanel.classList.remove(
         "opacity-100",
+        "opacity-50",
         "pointer-events-auto",
         "translate-y-0"
       );
