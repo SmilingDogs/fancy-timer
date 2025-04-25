@@ -232,7 +232,6 @@ lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
-  initParticles(); // Add this line before Swiper init
   // Swiper init
   const swiper = new Swiper(".swiper", {
     direction: "vertical",
@@ -259,16 +258,15 @@ document.addEventListener("DOMContentLoaded", () => {
           }, 800);
         } else {
           thumbnailsContainer.style.display = "none";
-          // Call immediately without delay
           initParticles();
         }
       },
       // Add initialization when slide is first loaded
-      init: function () {
-        if (this.activeIndex === 1) {
-          initParticles();
-        }
-      },
+      // init: function () {
+      //   if (this.activeIndex === 1) {
+      //     initParticles();
+      //   }
+      // },
     },
   });
   // Colors selector init
@@ -294,33 +292,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   // Thumbnail Gallery  init
-  if (thumbnailsContainer) {
-    thumbnailsContainer.addEventListener("click", (e) => {
-      console.log("clicked");
+  thumbnailsContainer.addEventListener("click", (e) => {
+    const target = e.target;
 
-      const target = e.target;
-      console.log(target.tagName);
+    if (target.tagName === "IMG" && target.dataset.bg) {
+      const newBg = target.dataset.bg;
+      currentBackgroundUrl = newBg; // Store the new background URL
+      const background = document.getElementById("background");
 
-      if (target.tagName === "IMG" && target.dataset.bg) {
-        const newBg = target.dataset.bg;
-        currentBackgroundUrl = newBg; // Store the new background URL
-        const background = document.getElementById("background");
+      const testImage = new Image();
+      testImage.onload = () => {
+        background.className = "fixed inset-0 bg-no-repeat bg-cover";
+        startRain();
+      };
+      testImage.src = `${newBg}?t=${Date.now()}`;
+    }
+    if (rainToggle.checked) {
+      rainToggle.checked = false;
+    }
+  });
 
-        const testImage = new Image();
-        testImage.onload = () => {
-          background.className = "fixed inset-0 bg-no-repeat bg-cover";
-          background.style.cssText = `
-            background-image: url('${newBg}');
-          `;
-          startRain();
-        };
-        testImage.src = `${newBg}?t=${Date.now()}`;
-      }
-      if (rainToggle.checked) {
-        rainToggle.checked = false;
-      }
-    });
-  }
   startRain();
 
   // Mode toggle logic
