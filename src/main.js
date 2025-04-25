@@ -8,6 +8,7 @@ const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 const resetBtn = document.getElementById("resetBtn");
 const lapBtn = document.getElementById("lapBtn");
+const thumbnailsContainer = document.getElementById("thumbnailsContainer");
 const buttons = document.querySelectorAll("button");
 const modeToggle = document.getElementById("modeToggle");
 const rainToggle = document.getElementById("rainToggle");
@@ -175,6 +176,37 @@ lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
+  // Swiper init
+  const swiper = new Swiper(".swiper", {
+    direction: "vertical",
+    mousewheel: true,
+    keyboard: {
+      enabled: true,
+    },
+    speed: 800,
+    effect: "slide",
+    slidesPerView: 1,
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+      renderBullet: function (index, className) {
+        const tooltips = ["Timer", "Global Time"];
+        return `<span class="${className}" data-tooltip="${tooltips[index]}"></span>`;
+      },
+    },
+    on: {
+      slideChange: function () {
+        if (this.activeIndex === 0) {
+          setTimeout(() => {
+            thumbnailsContainer.style.display = "flex";
+          }, 800);
+        } else {
+          thumbnailsContainer.style.display = "none";
+        }
+      },
+    },
+  });
+  // Colors selector init
   colorSelector.addEventListener("change", (e) => {
     const colorClasses = [
       "text-black",
@@ -196,11 +228,14 @@ document.addEventListener("DOMContentLoaded", () => {
       b.classList.add(activeColor);
     });
   });
-
-  const thumbnailsContainer = document.querySelector(".fixed.bottom-4.left-4");
+  // Thumbnail Gallery  init
   if (thumbnailsContainer) {
     thumbnailsContainer.addEventListener("click", (e) => {
+      console.log("clicked");
+
       const target = e.target;
+      console.log(target.tagName);
+
       if (target.tagName === "IMG" && target.dataset.bg) {
         const newBg = target.dataset.bg;
         currentBackgroundUrl = newBg; // Store the new background URL
@@ -254,7 +289,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   // Rain toggle logic
-
   rainToggle.addEventListener("change", () => {
     if (rainToggle.checked) {
       cleanupRainCanvases();

@@ -14,197 +14,254 @@
     />
     <link href="/src/styles.css" rel="stylesheet" />
   </head>
-  <body class="bg-gray-100 min-h-screen relative">
-    <!-- Background container -->
-    <div
-      class="fixed inset-0 bg-no-repeat bg-cover"
-      id="background"
-      style="z-index: 100; position: absolute; top: 0px; left: 0px; width: 100%"
-    ></div>
-
-    <!-- Main content container -->
-    <div
-      class="relative z-500 flex items-center justify-center min-h-screen p-4"
-    >
-      <!-- Stopwatch/Timer container -->
-      <div
-        class="bg-transparent p-8 pt-4 rounded-lg shadow-xl w-full max-w-md text-center"
-      >
-        <!-- Timer Display -->
-        <div id="display" class="text-7xl font-['Orbitron'] mb-6 animate-pulse">
-          00:00:00
-        </div>
-        <!-- Timer control buttons -->
-        <div class="flex justify-center space-x-4 mb-6">
-          <button id="startBtn" class="btn-primary bg-transparent text-black">
-            Start
-          </button>
-          <button id="stopBtn" class="btn-secondary bg-transparent text-black">
-            Stop
-          </button>
-          <button id="resetBtn" class="btn-danger bg-transparent text-black">
-            Reset
-          </button>
-          <button id="lapBtn" class="btn-primary bg-transparent text-black">
-            Lap
-          </button>
-        </div>
-        <!-- Laps recordings -->
-        <div class="text-left max-h-30 overflow-y-auto">
-          <ul id="laps" class="text-600 space-y-2"></ul>
-        </div>
-
-        <div class="flex justify-between items-center mt-4">
-          <!-- Rain Toggle button aligned to the right -->
-          <div class="flex justify-end pb-4">
-            <label class="relative inline-block w-28 h-12">
-              <input type="checkbox" id="rainToggle" class="peer hidden" />
-
-              <!-- Background -->
-              <span
-                class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
-              ></span>
-              <!-- Toggle circle -->
-              <span
-                class="absolute top-1 left-1 w-10 h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-16"
-              ></span>
-              <!-- TIMER text -->
-              <span
-                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10"
-              >
-                RAIN!
-              </span>
-              <!-- COUNTDOWN text -->
-              <span
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10"
-              >
-                NO RAIN
-              </span>
-            </label>
-          </div>
-          <!-- Mode Toggle button aligned to the right -->
-          <div class="flex justify-end pb-4">
-            <label class="relative inline-block w-32 h-12">
-              <input type="checkbox" id="modeToggle" class="peer hidden" />
-
-              <!-- Background -->
-              <span
-                class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
-              ></span>
-              <!-- Toggle circle -->
-              <span
-                class="absolute top-1 left-1 w-10 h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-20"
-              ></span>
-              <!-- TIMER text -->
-              <span
-                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10"
-              >
-                TIMER
-              </span>
-              <!-- COUNTDOWN text -->
-              <span
-                class="absolute left-2 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10"
-              >
-                COUNTDOWN
-              </span>
-            </label>
-          </div>
-          <!-- Timer colors selector -->
-          <div class="flex justify-end mb-4 mt-2">
-            <select
-              id="colorSelector"
-              class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+  <body class="bg-gray-100 min-h-screen relative overflow-hidden">
+    <!-- Swiper container -->
+    <div class="swiper h-screen w-full">
+      <div class="swiper-wrapper">
+        <!-- First Slide - Timer -->
+        <div class="swiper-slide relative">
+          <!-- Background container -->
+          <div
+            class="fixed inset-0 bg-no-repeat bg-cover"
+            id="background"
+            style="
+              z-index: 100;
+              position: absolute;
+              top: 0px;
+              left: 0px;
+              width: 100%;
+            "
+          ></div>
+          <!-- Main content container -->
+          <div
+            class="relative z-500 flex items-center justify-center min-h-screen p-4"
+          >
+            <!-- Stopwatch/Timer container -->
+            <div
+              class="bg-transparent p-8 pt-4 rounded-lg shadow-xl w-full max-w-md text-center"
             >
-              <option value="text-black">Black</option>
-              <option value="text-white">White</option>
-              <option value="text-yellow-500">Yellow</option>
-              <option value="text-blue-500">Blue</option>
-              <option value="text-red-500">Red</option>
-            </select>
+              <!-- Timer Display -->
+              <div
+                id="display"
+                class="text-7xl font-['Orbitron'] mb-6 animate-pulse"
+              >
+                00:00:00
+              </div>
+              <!-- Timer control buttons -->
+              <div class="flex justify-center space-x-4 mb-6">
+                <button
+                  id="startBtn"
+                  class="btn-primary bg-transparent text-black"
+                >
+                  Start
+                </button>
+                <button
+                  id="stopBtn"
+                  class="btn-secondary bg-transparent text-black"
+                >
+                  Stop
+                </button>
+                <button
+                  id="resetBtn"
+                  class="btn-danger bg-transparent text-black"
+                >
+                  Reset
+                </button>
+                <button
+                  id="lapBtn"
+                  class="btn-primary bg-transparent text-black"
+                >
+                  Lap
+                </button>
+              </div>
+              <!-- Laps recordings -->
+              <div class="text-left max-h-30 overflow-y-auto">
+                <ul id="laps" class="text-600 space-y-2"></ul>
+              </div>
+
+              <div class="flex justify-between items-center mt-4">
+                <!-- Rain Toggle button aligned to the right -->
+                <div class="flex justify-end pb-4">
+                  <label class="relative inline-block w-28 h-12">
+                    <input
+                      type="checkbox"
+                      id="rainToggle"
+                      class="peer hidden"
+                    />
+
+                    <!-- Background -->
+                    <span
+                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
+                    ></span>
+                    <!-- Toggle circle -->
+                    <span
+                      class="absolute top-1 left-1 w-10 h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-16"
+                    ></span>
+                    <!-- TIMER text -->
+                    <span
+                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10"
+                    >
+                      RAIN!
+                    </span>
+                    <!-- COUNTDOWN text -->
+                    <span
+                      class="absolute left-4 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10"
+                    >
+                      NO RAIN
+                    </span>
+                  </label>
+                </div>
+                <!-- Mode Toggle button aligned to the right -->
+                <div class="flex justify-end pb-4">
+                  <label class="relative inline-block w-32 h-12">
+                    <input
+                      type="checkbox"
+                      id="modeToggle"
+                      class="peer hidden"
+                    />
+
+                    <!-- Background -->
+                    <span
+                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
+                    ></span>
+                    <!-- Toggle circle -->
+                    <span
+                      class="absolute top-1 left-1 w-10 h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-20"
+                    ></span>
+                    <!-- TIMER text -->
+                    <span
+                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10"
+                    >
+                      TIMER
+                    </span>
+                    <!-- COUNTDOWN text -->
+                    <span
+                      class="absolute left-2 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10"
+                    >
+                      COUNTDOWN
+                    </span>
+                  </label>
+                </div>
+                <!-- Timer colors selector -->
+                <div class="flex justify-end mb-4 mt-2">
+                  <select
+                    id="colorSelector"
+                    class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  >
+                    <option value="text-black">Black</option>
+                    <option value="text-white">White</option>
+                    <option value="text-yellow-500">Yellow</option>
+                    <option value="text-blue-500">Blue</option>
+                    <option value="text-red-500">Red</option>
+                  </select>
+                </div>
+              </div>
+
+              <audio
+                id="beep"
+                src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+              ></audio>
+            </div>
+            <!-- Countdown Settings Panel -->
+            <div
+              id="countdownPanel"
+              class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-4"
+            >
+              <div class="flex flex-col items-center">
+                <div class="text-sm text-white font-['Orbitron']">Hours</div>
+                <input
+                  type="range"
+                  min="0"
+                  max="24"
+                  value="0"
+                  class="vertical-slider"
+                  id="hourSlider"
+                />
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="text-sm text-white font-['Orbitron']">Minutes</div>
+                <input
+                  type="range"
+                  min="0"
+                  max="60"
+                  value="0"
+                  class="vertical-slider"
+                  id="minuteSlider"
+                />
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="text-sm text-white font-['Orbitron']">Seconds</div>
+                <input
+                  type="range"
+                  min="1"
+                  max="60"
+                  value="1"
+                  class="vertical-slider"
+                  id="secondSlider"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <audio
-          id="beep"
-          src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-        ></audio>
-      </div>
-      <!-- Countdown Settings Panel -->
-      <div
-        id="countdownPanel"
-        class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-4"
-      >
-        <div class="flex flex-col items-center">
-          <div class="text-sm text-white font-['Orbitron']">Hours</div>
-          <input
-            type="range"
-            min="0"
-            max="24"
-            value="0"
-            class="vertical-slider"
-            id="hourSlider"
-          />
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="text-sm text-white font-['Orbitron']">Minutes</div>
-          <input
-            type="range"
-            min="0"
-            max="60"
-            value="0"
-            class="vertical-slider"
-            id="minuteSlider"
-          />
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="text-sm text-white font-['Orbitron']">Seconds</div>
-          <input
-            type="range"
-            min="1"
-            max="60"
-            value="1"
-            class="vertical-slider"
-            id="secondSlider"
-          />
+        <!-- Second Slide - Global Times -->
+        <div class="swiper-slide relative">
+          <div
+            class="absolute inset-0 bg-no-repeat bg-cover bg-center"
+            style="background-image: url('src/assets/earth.jpg')"
+          ></div>
+          <div
+            class="relative z-500 flex items-center justify-center min-h-screen p-4"
+          >
+            <div class="text-white text-center">
+              <h1 class="text-6xl font-['Orbitron'] mb-6">Coming Soon</h1>
+              <p class="text-xl font-['Orbitron']">
+                More features in development
+              </p>
+            </div>
+          </div>
         </div>
       </div>
+      <!-- Add Pagination -->
+      <div class="swiper-pagination flex flex-col gap-4 pr-2"></div>
     </div>
-    <div class="fixed bottom-4 left-4 flex space-x-2 z-500">
+    <!-- Thumbnail gallery  -->
+    <div
+      class="fixed bottom-4 left-4 flex space-x-2 z-500"
+      id="thumbnailsContainer"
+    >
       <img
         src="src/assets/amalfi-night.jpg"
-        data-bg="src/assets/amalfi-night.jpg"
-        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
         alt="Background 2"
+        data-bg="src/assets/amalfi-night.jpg"
+        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
-
       <img
         src="src/assets/bridge.jpg"
-        data-bg="src/assets/bridge.jpg"
-        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
         alt="Background 3"
+        data-bg="src/assets/bridge.jpg"
+        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
-
       <img
         src="src/assets/desert.jpg"
-        data-bg="src/assets/desert.jpg"
-        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
         alt="Background 4"
+        data-bg="src/assets/desert.jpg"
+        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
-
       <img
-        src="src/assets/orange-cave.jpg"
-        data-bg="src/assets/orange-cave.jpg"
-        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
+        src="src/assets/cave.jpg"
         alt="Background 5"
+        data-bg="src/assets/cave.jpg"
+        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
-
       <img
         src="src/assets/waterfall.jpg"
-        data-bg="src/assets/waterfall.jpg"
-        class="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-blue-400 transition duration-300"
         alt="Background 6"
+        data-bg="src/assets/waterfall.jpg"
+        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
     </div>
+    <!-- Library scripts  -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/rainyday.js@0.1.7/dist/rainyday.min.js"></script>
     <script src="src/main.js"></script>
