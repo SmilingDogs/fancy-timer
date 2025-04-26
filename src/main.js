@@ -1,4 +1,8 @@
 // Grab elements
+import * as am5 from "@amcharts/amcharts5";
+import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
+import * as am5map from "@amcharts/amcharts5/map";
+
 const display = document.getElementById("display");
 const colorSelector = document.getElementById("colorSelector");
 const laps = document.getElementById("laps");
@@ -24,6 +28,8 @@ let lapsCount = 0;
 let isCountdown = false;
 let rainyDay = null; // Add this line to store rainyDay instance globally
 let currentBackgroundUrl = "src/assets/desert.jpg"; // Add this line to store current background globally
+let worldMapRoot = null; //store world map root element globally
+let worldMapInitialized = false; // flag to check if world map is initialized
 
 // Functions
 function initParticles() {
@@ -56,7 +62,7 @@ function initParticles() {
         detect_on: "canvas",
         events: {
           onhover: {
-            enable: true,
+            enable: false,
             mode: "grab",
           },
           onclick: {
@@ -224,6 +230,45 @@ function enableCountdownPanel() {
   secondSlider.value = 1;
 }
 
+function initWorldMap() {
+  if (worldMapInitialized) {
+    console.log("World Map already initialized!");
+    return;
+  }
+
+  worldMapRoot = am5.Root.new("worldMap");
+
+  worldMapRoot.setThemes([am5.Theme.new(worldMapRoot)]);
+
+  let chart = worldMapRoot.container.children.push(
+    am5map.MapChart.new(worldMapRoot, {
+      panX: "rotateX",
+      panY: "none",
+      projection: am5map.geoMercator(),
+    })
+  );
+
+  let polygonSeries = chart.series.push(
+    am5map.MapPolygonSeries.new(worldMapRoot, {
+      geoJSON: am5geodata_worldLow,
+    })
+  );
+
+  polygonSeries.mapPolygons.template.setAll({
+    tooltipText: "{name}",
+    interactive: true,
+    fill: am5.color(0x0f172a),
+  });
+
+  polygonSeries.mapPolygons.template.states.create("hover", {
+    fill: am5.color(0x60a5fa),
+  });
+
+  chart.set("zoomControl", am5map.ZoomControl.new(worldMapRoot, {}));
+
+  worldMapInitialized = true; // 🚀 Set initialized flag!
+}
+
 // Event Listeners
 startBtn.addEventListener("click", start);
 stopBtn.addEventListener("click", stopTime);
@@ -256,9 +301,14 @@ document.addEventListener("DOMContentLoaded", () => {
           setTimeout(() => {
             thumbnailsContainer.style.display = "flex";
           }, 800);
+          document.getElementById("worldMap").style.display = "none";
         } else {
           thumbnailsContainer.style.display = "none";
           initParticles();
+          if (!worldMapInitialized) {
+            initWorldMap();
+          }
+          document.getElementById("worldMap").style.display = "block";
         }
       },
       // Add initialization when slide is first loaded
