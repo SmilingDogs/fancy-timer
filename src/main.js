@@ -195,8 +195,11 @@ function cleanupRainCanvases() {
     rainyDay.destroy();
     rainyDay = null;
   }
-  const rainCanvases = document.querySelectorAll("canvas");
-  rainCanvases.forEach((canvas) => canvas.remove());
+  const rainCanvas =
+    document.getElementById("background").previousElementSibling;
+  if (rainCanvas) {
+    rainCanvas.remove(); // Remove the canvas element
+  }
 
   // Restore the background image
   const background = document.getElementById("background");
@@ -248,11 +251,15 @@ function initWorldMap() {
     })
   );
 
+  chart.set("wheelable", true);
+
   let polygonSeries = chart.series.push(
     am5map.MapPolygonSeries.new(worldMapRoot, {
       geoJSON: am5geodata_worldLow,
     })
   );
+
+  window.worldPolygonSeries = polygonSeries;
 
   polygonSeries.mapPolygons.template.setAll({
     tooltipText: "{name}",
@@ -264,9 +271,45 @@ function initWorldMap() {
     fill: am5.color(0x60a5fa),
   });
 
+  // ✅ Move your hover + click event handlers HERE
+  polygonSeries.mapPolygons.template.set(
+    "tooltipText",
+    "[bold]{name}[/]\n{localTime}"
+  );
+
+  polygonSeries.mapPolygons.template.events.on("pointerover", (ev) => {
+    const polygon = ev.target;
+    const countryName = polygon.dataItem.dataContext.name;
+    const timeNow = new Date();
+    polygon.dataItem.set("localTime", timeNow.toLocaleTimeString());
+  });
+
+  polygonSeries.mapPolygons.template.events.on("click", (ev) => {
+    const polygon = ev.target;
+    const countryName = polygon.dataItem.dataContext.name;
+    const recentTimes = document.getElementById("recentTimes");
+
+    const card = document.createElement("div");
+    card.className =
+      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-4 text-white shadow-lg w-60";
+    card.innerHTML = `
+      <h3 class="font-bold text-lg mb-2">${countryName}</h3>
+      <p class="text-sm">${new Date().toLocaleDateString()}</p>
+      <p class="text-sm">${new Date().toLocaleTimeString()}</p>
+    `;
+    recentTimes.appendChild(card);
+  });
+
   chart.set("zoomControl", am5map.ZoomControl.new(worldMapRoot, {}));
 
-  worldMapInitialized = true; // 🚀 Set initialized flag!
+  worldMapInitialized = true; // Set initialized flag
+}
+
+function destroyParticles() {
+  const particlesContainer = document.getElementById("particles-js");
+  if (particlesContainer) {
+    particlesContainer.innerHTML = ""; // Clear old particles canvas
+  }
 }
 
 // Event Listeners
@@ -277,10 +320,11 @@ lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
+  initParticles(); // 💥 move here, initialize ONCE when page loads
   // Swiper init
   const swiper = new Swiper(".swiper", {
     direction: "vertical",
-    mousewheel: true,
+    mousewheel: false,
     keyboard: {
       enabled: true,
     },
@@ -304,19 +348,17 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("worldMap").style.display = "none";
         } else {
           thumbnailsContainer.style.display = "none";
-          initParticles();
+
           if (!worldMapInitialized) {
             initWorldMap();
           }
           document.getElementById("worldMap").style.display = "block";
         }
+
+        // ✅ Always clean and restart particles AFTER
+        destroyParticles();
+        initParticles();
       },
-      // Add initialization when slide is first loaded
-      // init: function () {
-      //   if (this.activeIndex === 1) {
-      //     initParticles();
-      //   }
-      // },
     },
   });
   // Colors selector init
