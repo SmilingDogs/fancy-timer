@@ -12,6 +12,7 @@ const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 const resetBtn = document.getElementById("resetBtn");
 const lapBtn = document.getElementById("lapBtn");
+const removeBtn = document.getElementById("removeCardsBtn");
 const thumbnailsContainer = document.getElementById("thumbnailsContainer");
 const buttons = document.querySelectorAll("button");
 const modeToggle = document.getElementById("modeToggle");
@@ -256,6 +257,7 @@ function initWorldMap() {
   let polygonSeries = chart.series.push(
     am5map.MapPolygonSeries.new(worldMapRoot, {
       geoJSON: am5geodata_worldLow,
+      exclude: ["AQ"], // Exclude Antarctica
     })
   );
 
@@ -288,10 +290,23 @@ function initWorldMap() {
     const polygon = ev.target;
     const countryName = polygon.dataItem.dataContext.name;
     const recentTimes = document.getElementById("recentTimes");
+    const existingCards = Array.from(
+      recentTimes.querySelectorAll(`[data-country]`)
+    );
+    const isSuchCard = existingCards.some(
+      (card) => card.dataset.country === countryName
+    );
+    if (isSuchCard) return; // If such card exists, do nothing
+
+    const recentTimesTitle = document.getElementById("recentTimesTitle");
+    recentTimesTitle.classList.remove("hidden");
+
+    removeBtn.classList.remove("hidden");
 
     const card = document.createElement("div");
     card.className =
-      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-4 text-white shadow-lg w-60";
+      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-4 text-[0x0f172a] shadow-lg w-50";
+    card.dataset.country = countryName;
     card.innerHTML = `
       <h3 class="font-bold text-lg mb-2">${countryName}</h3>
       <p class="text-sm">${new Date().toLocaleDateString()}</p>
@@ -312,6 +327,16 @@ function destroyParticles() {
   }
 }
 
+function removeCards() {
+  const recentTimes = document.getElementById("recentTimes");
+  const existingCards = Array.from(
+    recentTimes.querySelectorAll(`[data-country]`)
+  );
+  existingCards.forEach((card) => card.remove());
+  const recentTimesTitle = document.getElementById("recentTimesTitle");
+  recentTimesTitle.classList.add("hidden");
+  removeBtn.classList.add("hidden");
+}
 // Event Listeners
 startBtn.addEventListener("click", start);
 stopBtn.addEventListener("click", stopTime);
@@ -459,5 +484,9 @@ document.addEventListener("DOMContentLoaded", () => {
   secondSlider.addEventListener("input", () => {
     seconds = parseInt(secondSlider.value);
     updateDisplay();
+  });
+  // Remove cards button
+  removeBtn.addEventListener("click", () => {
+    removeCards();
   });
 });
