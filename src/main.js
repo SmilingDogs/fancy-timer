@@ -305,7 +305,7 @@ function initWorldMap() {
 
     const card = document.createElement("div");
     card.className =
-      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-4 text-[0x0f172a] shadow-lg w-50";
+      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-4 text-[#0f172a] shadow-lg min-w-[180px] max-w-[180px]";
     card.dataset.country = countryName;
     card.innerHTML = `
       <h3 class="font-bold text-lg mb-2">${countryName}</h3>
