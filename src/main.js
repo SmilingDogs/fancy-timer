@@ -21,7 +21,8 @@ const countdownPanel = document.getElementById("countdownPanel");
 const hourSlider = document.getElementById("hourSlider");
 const minuteSlider = document.getElementById("minuteSlider");
 const secondSlider = document.getElementById("secondSlider");
-
+const ampmBtn = document.getElementById("ampm");
+const twentyFourhBtn = document.getElementById("24hour");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
@@ -300,17 +301,24 @@ function initWorldMap() {
 
     const recentTimesTitle = document.getElementById("recentTimesTitle");
     recentTimesTitle.classList.remove("hidden");
-
     removeBtn.classList.remove("hidden");
+    ampmBtn.classList.remove("hidden");
 
     const card = document.createElement("div");
+    let now = new Date();
     card.className =
-      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-4 text-[#0f172a] shadow-lg min-w-[180px] max-w-[180px]";
+      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 xl:p-4 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
     card.dataset.country = countryName;
     card.innerHTML = `
       <h3 class="font-bold text-lg mb-2">${countryName}</h3>
-      <p class="text-sm">${new Date().toLocaleDateString()}</p>
-      <p class="text-sm">${new Date().toLocaleTimeString()}</p>
+      <div class="flex items-center mb-2 gap-2">
+        <p class="text-sm">${now.toLocaleDateString()}</p>
+        <p class="text-sm">${new Intl.DateTimeFormat("en-US", {
+          weekday: "long",
+        }).format(now)}</p>
+      </div>
+      <p class="text-sm">${now.toLocaleTimeString()}</p>
+      
     `;
     recentTimes.appendChild(card);
   });
@@ -336,6 +344,45 @@ function removeCards() {
   const recentTimesTitle = document.getElementById("recentTimesTitle");
   recentTimesTitle.classList.add("hidden");
   removeBtn.classList.add("hidden");
+  ampmBtn.classList.add("hidden");
+  twentyFourhBtn.classList.add("hidden");
+}
+
+function convertToAmPmFormat(time) {
+  let [h, m, s] = time.split(":").map(Number);
+  let ampm = h >= 12 ? "PM" : "AM";
+  let hour = h % 12 || 12; // Convert to 12-hour format
+  hour = hour.toString().padStart(2, "0");
+  m = m.toString().padStart(2, "0");
+  s = s.toString().padStart(2, "0");
+  // Add leading zero to minutes and seconds if needed
+  return `${hour}:${m}:${s} ${ampm}`;
+}
+
+function convertTo24HourFormat(ampmTime) {
+  let [time, modifier] = ampmTime.split(" ");
+  let [h, m, s] = time.split(":").map(Number);
+  if (modifier === "PM" && h < 12) h += 12; // Convert PM to 24-hour format
+  h = h.toString().padStart(2, "0");
+  m = m.toString().padStart(2, "0");
+  s = s.toString().padStart(2, "0");
+  return `${h}:${m}:${s}`;
+}
+
+function toggleTimeFormat(format = "12") {
+  const recentTimes = document.getElementById("recentTimes");
+  const cards = Array.from(recentTimes.querySelectorAll(`[data-country]`));
+  cards.forEach((card) => {
+    const timeElement = card.querySelector("p:nth-child(3)");
+    const timeText = timeElement.textContent;
+    let convertedTime = timeText; // Default to original time
+    if (format === "12") {
+      convertedTime = convertToAmPmFormat(timeText);
+    } else {
+      convertedTime = convertTo24HourFormat(timeText);
+    }
+    timeElement.textContent = convertedTime;
+  });
 }
 // Event Listeners
 startBtn.addEventListener("click", start);
@@ -488,5 +535,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Remove cards button
   removeBtn.addEventListener("click", () => {
     removeCards();
+  });
+  // AM/PM toggle button
+  ampmBtn.addEventListener("click", () => {
+    ampmBtn.classList.toggle("hidden");
+    twentyFourhBtn.classList.toggle("hidden");
+    toggleTimeFormat();
+  });
+  twentyFourhBtn.addEventListener("click", () => {
+    twentyFourhBtn.classList.toggle("hidden");
+    ampmBtn.classList.toggle("hidden");
+    toggleTimeFormat("24");
   });
 });

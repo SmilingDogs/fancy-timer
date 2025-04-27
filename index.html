@@ -224,20 +224,36 @@
             <!-- Map -->
             <div
               id="worldMap"
-              class="w-full max-w-5xl h-[500px] rounded-lg overflow-hidden bg-transparent z-5"
+              class="w-full xl:max-w-5xl max-w-4xl xl:h-[475px] h-[375px] rounded-lg overflow-hidden bg-transparent z-5"
             ></div>
 
             <!-- Recent Times Section -->
             <div
               id="recentTimesSection"
-              class="mt-4 w-full max-w-5xl flex items-start gap-4 px-4 z-5"
+              class="mt-2 xl:mt-4 w-full xl:max-w-5xl max-w-4xl flex items-start xl:gap-4 gap-2 xl:px-4 px-2 z-5"
             >
-              <div class="flex flex-col min-w-[120px]">
+              <div
+                class="flex flex-col justify-between min-w-[140px] xl:h-[120px] h-[100px]"
+              >
                 <span
                   class="text-white text-l font-semibold hidden"
                   id="recentTimesTitle"
                   >Recent Times:</span
                 >
+                <div class="flex items-center">
+                  <button
+                    class="bg-[#60a5fa] text-[#0f172a] px-2 py-1 hidden rounded-md text-xs"
+                    id="ampm"
+                  >
+                    AM/PM
+                  </button>
+                  <button
+                    class="bg-[#60a5fa] text-[#0f172a] px-2 py-1 hidden rounded-md text-xs"
+                    id="24hour"
+                  >
+                    24H
+                  </button>
+                </div>
                 <button
                   class="bg-[#60a5fa] text-[#0f172a] px-2 py-1 hidden rounded-md text-xs"
                   id="removeCardsBtn"
@@ -247,7 +263,7 @@
               </div>
               <div
                 id="recentTimes"
-                class="w-[960px] h-[110px] flex gap-4 flex-wrap overflow-y-auto pr-4"
+                class="xl:w-[860px] w-[calc(100%-120px)] xl:h-[120px] h-[100px] flex xl:gap-4 gap-3 flex-wrap overflow-y-auto xl:pr-4 pr-2"
               ></div>
             </div>
           </div>
