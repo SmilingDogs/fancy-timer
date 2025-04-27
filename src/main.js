@@ -14,7 +14,7 @@ const resetBtn = document.getElementById("resetBtn");
 const lapBtn = document.getElementById("lapBtn");
 const removeBtn = document.getElementById("removeCardsBtn");
 const thumbnailsContainer = document.getElementById("thumbnailsContainer");
-const buttons = document.querySelectorAll("button");
+const timerControls = document.querySelector(".timer-controls");
 const modeToggle = document.getElementById("modeToggle");
 const rainToggle = document.getElementById("rainToggle");
 const countdownPanel = document.getElementById("countdownPanel");
@@ -22,16 +22,17 @@ const hourSlider = document.getElementById("hourSlider");
 const minuteSlider = document.getElementById("minuteSlider");
 const secondSlider = document.getElementById("secondSlider");
 const ampmBtn = document.getElementById("ampm");
-const twentyFourhBtn = document.getElementById("24hour");
+const twentyFourBtn = document.getElementById("24hour");
+const recentTimesTitle = document.getElementById("recentTimesTitle");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
 let lapsCount = 0;
 let isCountdown = false;
-let rainyDay = null; // Add this line to store rainyDay instance globally
-let currentBackgroundUrl = "src/assets/desert.jpg"; // Add this line to store current background globally
+let rainyDay = null; // store rainyDay instance globally
+let currentBackgroundUrl = "src/assets/desert.jpg"; // store current background globally
 let worldMapRoot = null; //store world map root element globally
-let worldMapInitialized = false; // flag to check if world map is initialized
+let isWorldMapInitialized = false; // flag to check if world map is initialized
 
 // Functions
 function initParticles() {
@@ -236,7 +237,7 @@ function enableCountdownPanel() {
 }
 
 function initWorldMap() {
-  if (worldMapInitialized) {
+  if (isWorldMapInitialized) {
     console.log("World Map already initialized!");
     return;
   }
@@ -299,7 +300,6 @@ function initWorldMap() {
     );
     if (isSuchCard) return; // If such card exists, do nothing
 
-    const recentTimesTitle = document.getElementById("recentTimesTitle");
     recentTimesTitle.classList.remove("hidden");
     removeBtn.classList.remove("hidden");
     ampmBtn.classList.remove("hidden");
@@ -324,7 +324,7 @@ function initWorldMap() {
 
   chart.set("zoomControl", am5map.ZoomControl.new(worldMapRoot, {}));
 
-  worldMapInitialized = true; // Set initialized flag
+  isWorldMapInitialized = true; // Set initialized flag
 }
 
 function destroyParticles() {
@@ -340,11 +340,11 @@ function removeCards() {
     recentTimes.querySelectorAll(`[data-country]`)
   );
   existingCards.forEach((card) => card.remove());
-  const recentTimesTitle = document.getElementById("recentTimesTitle");
+
   recentTimesTitle.classList.add("hidden");
   removeBtn.classList.add("hidden");
   ampmBtn.classList.add("hidden");
-  twentyFourhBtn.classList.add("hidden");
+  twentyFourBtn.classList.add("hidden");
 }
 
 function convertToAmPmFormat(time) {
@@ -392,6 +392,7 @@ lapBtn.addEventListener("click", lap);
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
   initParticles(); // 💥 move here, initialize ONCE when page loads
+  startRain(); // Start rain effect
   // Swiper init
   const swiper = new Swiper(".swiper", {
     direction: "vertical",
@@ -420,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           thumbnailsContainer.style.display = "none";
 
-          if (!worldMapInitialized) {
+          if (!isWorldMapInitialized) {
             initWorldMap();
           }
           document.getElementById("worldMap").style.display = "block";
@@ -434,13 +435,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   // Colors selector init
   colorSelector.addEventListener("change", (e) => {
-    const colorClasses = [
-      "text-black",
-      "text-white",
-      "text-yellow-500",
-      "text-blue-500",
-      "text-red-500",
-    ];
+    //prettier-ignore
+    const colorClasses = ["text-black", "text-white", "text-yellow-500", "text-blue-500", "text-red-500"];
     let activeColor = e.target.value;
 
     display.classList.remove(...colorClasses);
@@ -449,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
     laps.classList.remove(...colorClasses);
     laps.classList.add(activeColor);
 
-    buttons.forEach((b) => {
+    Array.from(timerControls.querySelectorAll("button")).forEach((b) => {
       b.classList.remove(...colorClasses);
       b.classList.add(activeColor);
     });
@@ -466,16 +462,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const testImage = new Image();
       testImage.onload = () => {
         background.className = "fixed inset-0 bg-no-repeat bg-cover";
-        startRain();
+        if (!rainToggle.checked) {
+          startRain();
+        } else {
+          cleanupRainCanvases();
+        }
       };
       testImage.src = `${newBg}?t=${Date.now()}`;
     }
-    if (rainToggle.checked) {
-      rainToggle.checked = false;
-    }
   });
-
-  startRain();
 
   // Mode toggle logic
   modeToggle.addEventListener("change", () => {
@@ -538,11 +533,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // AM/PM toggle button
   ampmBtn.addEventListener("click", () => {
     ampmBtn.classList.toggle("hidden");
-    twentyFourhBtn.classList.toggle("hidden");
+    twentyFourBtn.classList.toggle("hidden");
     toggleTimeFormat();
   });
-  twentyFourhBtn.addEventListener("click", () => {
-    twentyFourhBtn.classList.toggle("hidden");
+  twentyFourBtn.addEventListener("click", () => {
+    twentyFourBtn.classList.toggle("hidden");
     ampmBtn.classList.toggle("hidden");
     toggleTimeFormat("24");
   });
