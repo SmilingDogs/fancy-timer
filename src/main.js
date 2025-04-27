@@ -307,18 +307,17 @@ function initWorldMap() {
     const card = document.createElement("div");
     let now = new Date();
     card.className =
-      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 xl:p-4 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
+      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
     card.dataset.country = countryName;
     card.innerHTML = `
-      <h3 class="font-bold text-lg mb-2">${countryName}</h3>
-      <div class="flex items-center mb-2 gap-2">
-        <p class="text-sm">${now.toLocaleDateString()}</p>
-        <p class="text-sm">${new Intl.DateTimeFormat("en-US", {
+      <h3 class="font-bold xl:text-lg text-base mb-2">${countryName}</h3>
+      <p class="xl:text-sm text-xs">${now.toLocaleDateString()}</p>
+      <div class="flex items-center mb-2 gap-[8px] xl:gap-2">
+        <p class="xl:text-sm text-xs">${now.toLocaleTimeString()}</p>
+        <p class="xl:text-sm text-xs">${new Intl.DateTimeFormat("en-US", {
           weekday: "long",
         }).format(now)}</p>
       </div>
-      <p class="text-sm">${now.toLocaleTimeString()}</p>
-      
     `;
     recentTimes.appendChild(card);
   });
