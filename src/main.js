@@ -275,7 +275,6 @@ function initWorldMap() {
     fill: am5.color(0x60a5fa),
   });
 
-  // ✅ Move your hover + click event handlers HERE
   polygonSeries.mapPolygons.template.set(
     "tooltipText",
     "[bold]{name}[/]\n{localTime}"
@@ -283,7 +282,7 @@ function initWorldMap() {
 
   polygonSeries.mapPolygons.template.events.on("pointerover", (ev) => {
     const polygon = ev.target;
-    const countryName = polygon.dataItem.dataContext.name;
+    // const countryName = polygon.dataItem.dataContext.name;
     const timeNow = new Date();
     polygon.dataItem.set("localTime", timeNow.toLocaleTimeString());
   });
@@ -312,13 +311,11 @@ function initWorldMap() {
     card.innerHTML = `
       <h3 class="font-bold xl:text-lg text-base mb-2">${countryName}</h3>
       <p class="xl:text-sm text-xs">${now.toLocaleDateString()}</p>
-      <div class="flex items-center mb-2 gap-[8px] xl:gap-2">
-        <p class="xl:text-sm text-xs">${now.toLocaleTimeString()}</p>
-        <p class="xl:text-sm text-xs">${new Intl.DateTimeFormat("en-US", {
-          weekday: "long",
-        }).format(now)}</p>
-      </div>
-    `;
+      <p class="xl:text-sm text-xs">${now.toLocaleTimeString()}</p>
+      <p class="xl:text-sm text-xs">${new Intl.DateTimeFormat("en-US", {
+        weekday: "long",
+      }).format(now)}</p>`;
+
     recentTimes.appendChild(card);
   });
 
