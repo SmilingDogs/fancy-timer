@@ -282,9 +282,50 @@ function initWorldMap() {
 
   polygonSeries.mapPolygons.template.events.on("pointerover", (ev) => {
     const polygon = ev.target;
-    // const countryName = polygon.dataItem.dataContext.name;
-    const timeNow = new Date();
-    polygon.dataItem.set("localTime", timeNow.toLocaleTimeString());
+    const countryName = polygon.dataItem.dataContext.name;
+    const center = polygon.geoCentroid(); // 📍 Get country's center lat/lng
+
+    // polygon.dataItem.set("localTime", "Loading...");
+
+    // Show tooltip immediately with loading
+    // polygon.showTooltip();
+
+    if (center) {
+      const lat = center.latitude;
+      const lng = center.longitude;
+
+      fetch(
+        `https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=YOUR_USERNAME`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          const timeNow = new Date(data.time);
+          const weekday = timeNow.toLocaleDateString("en-US", {
+            weekday: "long",
+          });
+
+          polygon.dataItem.set(
+            "localTime",
+            `
+  ${weekday}
+  ${timeNow.toLocaleDateString()}
+  ${timeNow.toLocaleTimeString()}
+          `
+          );
+
+          // 💥 Force tooltip to refresh after data arrives
+          polygon.hideTooltip();
+          polygon.showTooltip();
+        })
+        .catch((err) => {
+          console.error("GeoNames API error:", err);
+          polygon.dataItem.set("localTime", "Time unavailable");
+
+          // 💥 Even if error, refresh tooltip
+          polygon.hideTooltip();
+          polygon.showTooltip();
+        });
+    }
   });
 
   polygonSeries.mapPolygons.template.events.on("click", (ev) => {
@@ -303,20 +344,38 @@ function initWorldMap() {
     removeBtn.classList.remove("hidden");
     ampmBtn.classList.remove("hidden");
 
-    const card = document.createElement("div");
-    let now = new Date();
-    card.className =
-      "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
-    card.dataset.country = countryName;
-    card.innerHTML = `
-      <h3 class="font-bold xl:text-lg text-base mb-2">${countryName}</h3>
-      <p class="xl:text-sm text-xs">${now.toLocaleDateString()}</p>
-      <p class="xl:text-sm text-xs">${now.toLocaleTimeString()}</p>
-      <p class="xl:text-sm text-xs">${new Intl.DateTimeFormat("en-US", {
-        weekday: "long",
-      }).format(now)}</p>`;
+    const center = polygon.geoCentroid();
 
-    recentTimes.appendChild(card);
+    if (center) {
+      const lat = center.latitude;
+      const lng = center.longitude;
+
+      fetch(
+        `https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=j_sully`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          const timeNow = new Date(data.time);
+          //prettier-ignore
+          const weekday = timeNow.toLocaleDateString("en-US", {weekday: "long"});
+          const recentTimes = document.getElementById("recentTimes");
+          const card = document.createElement("div");
+          card.className =
+            "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
+          card.dataset.country = countryName;
+          card.innerHTML = `
+          <h3 class="font-bold text-lg mb-2">${data.countryName}</h3>
+          <p class="text-sm">${timeNow.toLocaleDateString()}</p>
+          <p class="text-sm">${timeNow.toLocaleTimeString()}</p>
+          <p class="text-sm">${weekday}</p>
+        `;
+
+          recentTimes.appendChild(card);
+        })
+        .catch((err) => {
+          console.error("GeoNames API error:", err);
+        });
+    }
   });
 
   chart.set("zoomControl", am5map.ZoomControl.new(worldMapRoot, {}));
