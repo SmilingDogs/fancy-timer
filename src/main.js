@@ -285,11 +285,6 @@ function initWorldMap() {
     const countryName = polygon.dataItem.dataContext.name;
     const center = polygon.geoCentroid(); // 📍 Get country's center lat/lng
 
-    // polygon.dataItem.set("localTime", "Loading...");
-
-    // Show tooltip immediately with loading
-    // polygon.showTooltip();
-
     if (center) {
       const lat = center.latitude;
       const lng = center.longitude;
@@ -328,6 +323,14 @@ function initWorldMap() {
     }
   });
 
+  // 🧹 Clean up tooltip when mouse leaves
+  polygonSeries.mapPolygons.template.events.on("pointerout", (ev) => {
+    const polygon = ev.target;
+    if (polygon) {
+      polygon.hideTooltip(); // 💥 Force tooltip to hide
+    }
+  });
+
   polygonSeries.mapPolygons.template.events.on("click", (ev) => {
     const polygon = ev.target;
     const countryName = polygon.dataItem.dataContext.name;
@@ -355,9 +358,12 @@ function initWorldMap() {
       )
         .then((res) => res.json())
         .then((data) => {
-          const timeNow = new Date(data.time);
+          const serverNow = new Date(data.time);
+          const localNow = new Date();
+          serverNow.setSeconds(localNow.getSeconds()); // Inject real seconds
+
           //prettier-ignore
-          const weekday = timeNow.toLocaleDateString("en-US", {weekday: "long"});
+          const weekday = serverNow.toLocaleDateString("en-US", {weekday: "long"});
           const recentTimes = document.getElementById("recentTimes");
           const card = document.createElement("div");
           card.className =
@@ -365,12 +371,20 @@ function initWorldMap() {
           card.dataset.country = countryName;
           card.innerHTML = `
           <h3 class="font-bold text-lg mb-2">${data.countryName}</h3>
-          <p class="text-sm">${timeNow.toLocaleDateString()}</p>
-          <p class="text-sm">${timeNow.toLocaleTimeString()}</p>
+          <p class="text-sm">${serverNow.toLocaleDateString()}</p>
+          <p class="text-sm live-clock">${serverNow.toLocaleTimeString()}</p>
           <p class="text-sm">${weekday}</p>
         `;
 
           recentTimes.appendChild(card);
+
+          // Function to update the live clock every second
+          const liveClock = card.querySelector(".live-clock");
+          let currentTime = new Date(serverNow); // full time with fixed seconds
+          setInterval(() => {
+            currentTime.setSeconds(currentTime.getSeconds() + 1); //
+            liveClock.textContent = currentTime.toLocaleTimeString();
+          }, 1000);
         })
         .catch((err) => {
           console.error("GeoNames API error:", err);
