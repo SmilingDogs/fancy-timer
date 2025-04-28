@@ -269,6 +269,8 @@ function initWorldMap() {
     tooltipText: "{name}",
     interactive: true,
     fill: am5.color(0x0f172a),
+    tooltipPosition: "pointer", // Add this!
+    hoverTooltipEnabled: false, // Add this!
   });
 
   polygonSeries.mapPolygons.template.states.create("hover", {
@@ -294,31 +296,58 @@ function initWorldMap() {
       )
         .then((res) => res.json())
         .then((data) => {
-          const timeNow = new Date(data.time);
-          const weekday = timeNow.toLocaleDateString("en-US", {
+          const serverNow = new Date(data.time);
+          const localNow = new Date();
+          serverNow.setSeconds(localNow.getSeconds()); // Inject real seconds into server time
+
+          const weekday = serverNow.toLocaleDateString("en-US", {
             weekday: "long",
           });
 
+          // Set formatted local time inside polygon data
           polygon.dataItem.set(
             "localTime",
             `
   ${weekday}
-  ${timeNow.toLocaleDateString()}
-  ${timeNow.toLocaleTimeString()}
-          `
+  ${serverNow.toLocaleDateString()}
+  ${serverNow.toLocaleTimeString()}
+            `
           );
 
-          // 💥 Force tooltip to refresh after data arrives
-          polygon.hideTooltip();
-          polygon.showTooltip();
+          // 🧹 Properly show tooltip
+          polygon.hideTooltip(); // Hide old tooltip if exists
+          polygon.showTooltip(); // Show updated tooltip
+
+          // 🎨 Force your custom tooltip styles every time!
+          const tooltip = polygon.get("tooltip");
+          if (tooltip) {
+            tooltip.get("background").setAll({
+              fill: am5.color(0x0f172a), // Dark navy background
+              fillOpacity: 1,
+              stroke: am5.color(0xffffff), // White border
+              strokeOpacity: 1,
+              cornerRadius: 8, // Rounded corners
+            });
+          }
         })
         .catch((err) => {
           console.error("GeoNames API error:", err);
           polygon.dataItem.set("localTime", "Time unavailable");
 
-          // 💥 Even if error, refresh tooltip
           polygon.hideTooltip();
           polygon.showTooltip();
+
+          // Apply styles even in error case to avoid ugly default
+          const tooltip = polygon.get("tooltip");
+          if (tooltip) {
+            tooltip.get("background").setAll({
+              fill: am5.color(0x0f172a),
+              fillOpacity: 1,
+              stroke: am5.color(0xffffff),
+              strokeOpacity: 1,
+              cornerRadius: 8,
+            });
+          }
         });
     }
   });
