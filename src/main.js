@@ -21,9 +21,9 @@ const countdownPanel = document.getElementById("countdownPanel");
 const hourSlider = document.getElementById("hourSlider");
 const minuteSlider = document.getElementById("minuteSlider");
 const secondSlider = document.getElementById("secondSlider");
-const ampmBtn = document.getElementById("ampm");
-const twentyFourBtn = document.getElementById("24hour");
 const recentTimesTitle = document.getElementById("recentTimesTitle");
+const timeFormatToggle = document.getElementById("timeFormatToggle");
+const timeFormatElement = document.getElementById("timeFormat");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
@@ -33,6 +33,7 @@ let rainyDay = null; // store rainyDay instance globally
 let currentBackgroundUrl = "src/assets/desert.jpg"; // store current background globally
 let worldMapRoot = null; //store world map root element globally
 let isWorldMapInitialized = false; // flag to check if world map is initialized
+let isAmPmOn = false; // flag to check if AM/PM format is on
 
 // Functions
 function initParticles() {
@@ -374,7 +375,8 @@ function initWorldMap() {
 
     recentTimesTitle.classList.remove("hidden");
     removeBtn.classList.remove("hidden");
-    ampmBtn.classList.remove("hidden");
+    timeFormatElement.classList.remove("hidden");
+    timeFormatElement.classList.add("flex");
 
     const center = polygon.geoCentroid();
 
@@ -410,10 +412,14 @@ function initWorldMap() {
           // Function to update the live clock every second
           const liveClock = card.querySelector(".live-clock");
           let currentTime = new Date(serverNow); // full time with fixed seconds
-          setInterval(() => {
-            currentTime.setSeconds(currentTime.getSeconds() + 1); //
-            liveClock.textContent = currentTime.toLocaleTimeString();
+          const intervalId = setInterval(() => {
+            currentTime.setSeconds(currentTime.getSeconds() + 1);
+            liveClock.textContent = isAmPmOn
+              ? currentTime.toLocaleTimeString("en-US", { hour12: true })
+              : currentTime.toLocaleTimeString();
           }, 1000);
+
+          card.dataset.intervalId = intervalId; // 💥 Save interval ID inside the card
         })
         .catch((err) => {
           console.error("GeoNames API error:", err);
@@ -438,50 +444,21 @@ function removeCards() {
   const existingCards = Array.from(
     recentTimes.querySelectorAll(`[data-country]`)
   );
-  existingCards.forEach((card) => card.remove());
+
+  existingCards.forEach((card) => {
+    const intervalId = card.dataset.intervalId;
+    if (intervalId) {
+      clearInterval(intervalId); // 💥 Clear the clock interval
+    }
+    card.remove();
+  });
 
   recentTimesTitle.classList.add("hidden");
   removeBtn.classList.add("hidden");
-  ampmBtn.classList.add("hidden");
-  twentyFourBtn.classList.add("hidden");
+  timeFormatElement.classList.remove("flex");
+  timeFormatElement.classList.add("hidden"); // Hide time format element
 }
 
-function convertToAmPmFormat(time) {
-  let [h, m, s] = time.split(":").map(Number);
-  let ampm = h >= 12 ? "PM" : "AM";
-  let hour = h % 12 || 12; // Convert to 12-hour format
-  hour = hour.toString().padStart(2, "0");
-  m = m.toString().padStart(2, "0");
-  s = s.toString().padStart(2, "0");
-  // Add leading zero to minutes and seconds if needed
-  return `${hour}:${m}:${s} ${ampm}`;
-}
-
-function convertTo24HourFormat(ampmTime) {
-  let [time, modifier] = ampmTime.split(" ");
-  let [h, m, s] = time.split(":").map(Number);
-  if (modifier === "PM" && h < 12) h += 12; // Convert PM to 24-hour format
-  h = h.toString().padStart(2, "0");
-  m = m.toString().padStart(2, "0");
-  s = s.toString().padStart(2, "0");
-  return `${h}:${m}:${s}`;
-}
-
-function toggleTimeFormat(format = "12") {
-  const recentTimes = document.getElementById("recentTimes");
-  const cards = Array.from(recentTimes.querySelectorAll(`[data-country]`));
-  cards.forEach((card) => {
-    const timeElement = card.querySelector("p:nth-child(3)");
-    const timeText = timeElement.textContent;
-    let convertedTime = timeText; // Default to original time
-    if (format === "12") {
-      convertedTime = convertToAmPmFormat(timeText);
-    } else {
-      convertedTime = convertTo24HourFormat(timeText);
-    }
-    timeElement.textContent = convertedTime;
-  });
-}
 // Event Listeners
 startBtn.addEventListener("click", start);
 stopBtn.addEventListener("click", stopTime);
@@ -630,14 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
     removeCards();
   });
   // AM/PM toggle button
-  ampmBtn.addEventListener("click", () => {
-    ampmBtn.classList.toggle("hidden");
-    twentyFourBtn.classList.toggle("hidden");
-    toggleTimeFormat();
-  });
-  twentyFourBtn.addEventListener("click", () => {
-    twentyFourBtn.classList.toggle("hidden");
-    ampmBtn.classList.toggle("hidden");
-    toggleTimeFormat("24");
+  timeFormatToggle.addEventListener("change", () => {
+    isAmPmOn = timeFormatToggle.checked;
   });
 });
