@@ -69,30 +69,78 @@ function initGlobe() {
       am5map.MapPointSeries.new(root, {
         latitudeField: "latitude",
         longitudeField: "longitude",
+        tooltipText: "{city}", // Set default tooltip
       })
     );
 
+    // Set the data first
+    circleSeries.data.setAll(cities);
+
     // BULLETS (CIRCLES)
-    circleSeries.bullets.push((root, dataItem) => {
+    circleSeries.bullets.push((root, series, dataItem) => {
+      // Added series parameter
       const circle = am5.Circle.new(root, {
-        radius: 5, // Set default fixed radius instead of using dataItem
+        radius: 5,
         fill: am5.color("#ffcc00"),
-        tooltipText: "{city}",
         cursorOverStyle: "pointer",
+        tooltipText: "Loading...",
+        tooltipPosition: "pointer",
       });
+
+      circle.events.on("pointerover", () => {
+        const cityData = dataItem.dataContext;
+
+        if (!cityData || !cityData.city) {
+          console.warn("Invalid city data:", cityData);
+          return;
+        }
+
+        const { city, latitude, longitude } = cityData;
+
+        fetch(
+          `https://secure.geonames.org/timezoneJSON?lat=${latitude}&lng=${longitude}&username=j_sully`
+        )
+          .then((res) => {
+            if (!res.ok) throw new Error("GeoNames API error");
+            return res.json();
+          })
+          .then((data) => {
+            const now = new Date(data.time);
+            const formatted = `${city}\n${now.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}\n${now.toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })}`;
+            circle.set("tooltipText", formatted);
+            circle.showTooltip(); // ✅ force display
+          })
+          .catch((err) => {
+            console.error("GeoNames error:", err);
+            circle.set("tooltipText", `${city}\nTime unavailable`);
+            circle.showTooltip(); // ✅ force display
+          });
+      });
+
       return am5.Bullet.new(root, { sprite: circle });
     });
 
+    // Make sure to setAll data AFTER defining bullets
+    circleSeries.data.setAll(cities);
+
     // Add cities to the series
-    cities.forEach((city) => {
-      circleSeries.data.push(city);
-    });
+    // cities.forEach((city) => {
+    //   circleSeries.data.push(city);
+    // });
 
     // Auto rotate the globe
     chart.animate({
       key: "rotationX",
       to: 360,
-      duration: 60000,
+      duration: 50000,
       loops: Infinity,
     });
 
