@@ -22,15 +22,8 @@
         <div class="swiper-slide relative">
           <!-- Background container -->
           <div
-            class="fixed inset-0 bg-no-repeat bg-cover"
+            class="absolute inset-0 bg-no-repeat bg-cover z-100 top-0 left-0 w-full"
             id="background"
-            style="
-              z-index: 100;
-              position: absolute;
-              top: 0px;
-              left: 0px;
-              width: 100%;
-            "
           ></div>
           <!-- Main content container -->
           <div
@@ -214,21 +207,21 @@
             class="absolute inset-0 w-full h-full z-1"
           ></div>
           <div
-            class="absolute inset-0 bg-no-repeat bg-cover bg-center z-0"
-            style="background-image: url('src/assets/earth.jpg')"
+            class="absolute inset-0 bg-no-repeat bg-cover bg-center z-0 bg-[url(/src/assets/earth.jpg)]"
           ></div>
           <!-- Global Time slide content -->
           <div class="flex flex-col items-center min-h-screen p-6">
             <h2 class="text-3xl font-bold text-white mb-6 z-5">Global Times</h2>
 
-            <!-- Map -->
+            <!-- 2D World Map -->
             <!-- <div
               id="worldMap"
               class="w-full xl:max-w-5xl max-w-4xl xl:h-[475px] h-[375px] rounded-lg overflow-hidden bg-transparent z-5"
             ></div> -->
+            <!-- 3D Globus -->
             <div id="globeDiv" class="w-2/3 h-[475px] z-5"></div>
 
-            <!-- Recent Times Section -->
+            <!-- Live Times Section -->
             <div
               id="recentTimesSection"
               class="mt-2 xl:mt-4 w-full xl:max-w-5xl max-w-4xl flex items-start xl:gap-4 gap-2 xl:px-4 px-2 z-5"
@@ -239,17 +232,13 @@
                 <span
                   class="text-white text-l font-semibold hidden"
                   id="recentTimesTitle"
-                  >Recent Times:
+                  >Live Times:
                 </span>
                 <!-- Time Format toggle -->
                 <div class="justify-end pb-4 hidden" id="timeFormat">
                   <label class="relative inline-block w-24 h-10">
-                    <input
-                      type="checkbox"
-                      id="timeFormatToggle"
-                      class="peer hidden"
-                    />
-
+                    <!--prettier-ignore-->
+                    <input type="checkbox" id="timeFormatToggle" class="peer hidden" />
                     <!-- Background -->
                     <span
                       class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-[#60a5fa] transition-colors duration-300"
