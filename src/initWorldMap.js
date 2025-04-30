@@ -54,7 +54,7 @@ function initWorldMap() {
       const lng = center.longitude;
 
       fetch(
-        `https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=YOUR_USERNAME`
+        `https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=J_sully`
       )
         .then((res) => res.json())
         .then((data) => {

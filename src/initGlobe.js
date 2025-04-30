@@ -1,7 +1,13 @@
 // Global Times 2.0 - Rotating 3D Globe with Real-Time City Times
 import { cities } from "./cities";
+import { isAmPmOn } from "./main";
 
 export let isGlobeInitialized = false; // Changed to export
+//prettier-ignore
+const multiZoneCountries = ["United States", "Canada", "Russia", "Brazil", "Australia", "Mexico", "Indonesia", "Kazakhstan"];
+const recentTimesTitle = document.getElementById("recentTimesTitle");
+const timeFormatElement = document.getElementById("timeFormat");
+const removeBtn = document.getElementById("removeCardsBtn");
 
 function initGlobe() {
   if (isGlobeInitialized) return;
@@ -64,6 +70,139 @@ function initGlobe() {
       fill: am5.color("#60a5fa"),
     });
 
+    //Get times on hover over countries
+    // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/#Tooltips
+    polygonSeries.mapPolygons.template.events.on("pointerover", (ev) => {
+      const polygon = ev.target;
+      const countryName = polygon.dataItem.dataContext.name;
+
+      if (multiZoneCountries.includes(countryName)) {
+        polygon.set(
+          "tooltipText",
+          `[bold]{name}[/]\nMultiple time zones\nHover over a city to check the time`
+        );
+        return;
+      }
+
+      const center = polygon.geoCentroid();
+      if (!center) return;
+
+      const lat = center.latitude;
+      const lng = center.longitude;
+
+      fetch(
+        `https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=j_sully`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          const raw = data.time;
+          let now;
+
+          if (raw) {
+            now = new Date(raw);
+          } else if (data.gmtOffset !== undefined) {
+            now = new Date(
+              Date.now() +
+                (data.gmtOffset * 60 + new Date().getTimezoneOffset()) * 60000
+            );
+          }
+
+          if (!now || isNaN(now.getTime())) {
+            console.warn("Invalid date from GeoNames:", data);
+            polygon.set("tooltipText", `[bold]{name}[/]\nTime unavailable`);
+            return;
+          }
+          const weekday = now.toLocaleDateString("en-US", { weekday: "long" });
+          const formatted = `${now.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}\n${now.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: isAmPmOn ? true : false,
+          })}\n${weekday}`;
+          polygon.set("tooltipText", `[bold]{name}[/]\n${formatted}`);
+          polygon.showTooltip();
+        })
+        .catch((err) => {
+          console.error("GeoNames error:", err);
+          polygon.set("tooltipText", `[bold]{name}[/]\nTime unavailable`);
+          polygon.showTooltip();
+        });
+    });
+
+    polygonSeries.mapPolygons.template.events.on("click", (ev) => {
+      const polygon = ev.target;
+      const countryName = polygon.dataItem.dataContext.name;
+      const recentTimes = document.getElementById("recentTimes");
+      const existingCards = Array.from(
+        recentTimes.querySelectorAll(`[data-country]`)
+      );
+      const isSuchCard = existingCards.some(
+        (card) => card.dataset.country === countryName
+      );
+      if (isSuchCard) return; // If such card exists, do nothing
+
+      if (multiZoneCountries.includes(countryName)) {
+        polygon.set("tooltipText", `[bold]{name}[/]`);
+        return;
+      }
+
+      recentTimesTitle.classList.remove("hidden");
+      removeBtn.classList.remove("hidden");
+      timeFormatElement.classList.remove("hidden");
+      timeFormatElement.classList.add("flex");
+
+      const center = polygon.geoCentroid();
+
+      if (center) {
+        const lat = center.latitude;
+        const lng = center.longitude;
+
+        fetch(
+          `https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=j_sully`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            const serverNow = new Date(data.time);
+            const localNow = new Date();
+            serverNow.setSeconds(localNow.getSeconds()); // Inject real seconds
+
+            //prettier-ignore
+            const weekday = serverNow.toLocaleDateString("en-US", {weekday: "long"});
+            const recentTimes = document.getElementById("recentTimes");
+            const card = document.createElement("div");
+            card.className =
+              "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
+            card.dataset.country = countryName;
+            card.innerHTML = `
+              <h3 class="font-bold text-lg mb-2">${data.countryName}</h3>
+              <p class="text-sm">${serverNow.toLocaleDateString()}</p>
+              <p class="text-sm live-clock">${serverNow.toLocaleTimeString()}</p>
+              <p class="text-sm">${weekday}</p>
+            `;
+
+            recentTimes.appendChild(card);
+
+            // Function to update the live clock every second
+            const liveClock = card.querySelector(".live-clock");
+            let currentTime = new Date(serverNow); // full time with fixed seconds
+            const intervalId = setInterval(() => {
+              currentTime.setSeconds(currentTime.getSeconds() + 1);
+              liveClock.textContent = isAmPmOn
+                ? currentTime.toLocaleTimeString("en-US", { hour12: true })
+                : currentTime.toLocaleTimeString();
+            }, 1000);
+
+            card.dataset.intervalId = intervalId; // 💥 Save interval ID inside the card
+          })
+          .catch((err) => {
+            console.error("GeoNames API error:", err);
+          });
+      }
+    });
+
     // Create polygon series for projected circles
     const circleSeries = chart.series.push(
       am5map.MapPointSeries.new(root, {
@@ -113,7 +252,7 @@ function initGlobe() {
             })}\n${now.toLocaleTimeString("en-US", {
               hour: "numeric",
               minute: "2-digit",
-              hour12: true,
+              hour12: isAmPmOn ? true : false,
             })}`;
             circle.set("tooltipText", formatted);
             circle.showTooltip(); // ✅ force display
@@ -121,7 +260,7 @@ function initGlobe() {
           .catch((err) => {
             console.error("GeoNames error:", err);
             circle.set("tooltipText", `${city}\nTime unavailable`);
-            circle.showTooltip(); // ✅ force display
+            circle.showTooltip();
           });
       });
 
@@ -131,11 +270,6 @@ function initGlobe() {
     // Make sure to setAll data AFTER defining bullets
     circleSeries.data.setAll(cities);
 
-    // Add cities to the series
-    // cities.forEach((city) => {
-    //   circleSeries.data.push(city);
-    // });
-
     // Auto rotate the globe
     chart.animate({
       key: "rotationX",
@@ -144,34 +278,6 @@ function initGlobe() {
       loops: Infinity,
     });
 
-    // Create circles when data for countries is fully loaded.
-    // polygonSeries.events.on("datavalidated", function () {
-    //   circleSeries.data.clear();
-
-    //   for (var i = 0; i < data.length; i++) {
-    //     var dataContext = data[i];
-    //     var countryDataItem = polygonSeries.getDataItemById(dataContext.id);
-    //     var countryPolygon = countryDataItem.get("mapPolygon");
-
-    //     var value = dataContext.value;
-
-    //     var radius =
-    //       minRadius + (maxRadius * (value - valueLow)) / (valueHigh - valueLow);
-
-    //     if (countryPolygon) {
-    //       var geometry = am5map.getGeoCircle(
-    //         countryPolygon.visualCentroid(),
-    //         radius
-    //       );
-    //       circleSeries.data.push({
-    //         name: dataContext.name,
-    //         value: dataContext.value,
-    //         polygonTemplate: dataContext.polygonTemplate,
-    //         geometry: geometry,
-    //       });
-    //     }
-    //   }
-    // });
     // Zoom controls
     chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
 

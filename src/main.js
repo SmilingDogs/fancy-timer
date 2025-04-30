@@ -20,8 +20,8 @@ const hourSlider = document.getElementById("hourSlider");
 const minuteSlider = document.getElementById("minuteSlider");
 const secondSlider = document.getElementById("secondSlider");
 const recentTimesTitle = document.getElementById("recentTimesTitle");
-const timeFormatToggle = document.getElementById("timeFormatToggle");
 const timeFormatElement = document.getElementById("timeFormat");
+const timeFormatToggle = document.getElementById("timeFormatToggle");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
@@ -31,7 +31,7 @@ let rainyDay = null; // store rainyDay instance globally
 let currentBackgroundUrl = "src/assets/desert.jpg"; // store current background globally
 let worldMapRoot = null; //store world map root element globally
 let isWorldMapInitialized = false; // flag to check if world map is initialized
-let isAmPmOn = false; // flag to check if AM/PM format is on
+export let isAmPmOn = false; // flag to check if AM/PM format is on
 // Functions
 function initParticles() {
   if (window.particlesJS) {
