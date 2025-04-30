@@ -1,4 +1,4 @@
-// 🌍 Global Times 2.0 - Rotating 3D Globe with Real-Time City Times
+// 🌍 Global Times 2.0 - Rotating 3D Globe with Real-Time City Times (async/await version)
 import { cities } from "./cities";
 import { isAmPmOn } from "./main";
 import { fetchAndFormatTime } from "./timeUtils";
@@ -14,7 +14,7 @@ let hoverTimeout = null;
 function initGlobe() {
   if (isGlobeInitialized) return;
 
-  am5.ready(function () {
+  am5.ready(() => {
     const root = am5.Root.new("globeDiv");
     root.setThemes([am5themes_Animated.new(root)]);
 
@@ -61,9 +61,9 @@ function initGlobe() {
       fill: am5.color("#60a5fa"),
     });
 
-    polygonSeries.mapPolygons.template.events.on("pointerover", (ev) => {
+    polygonSeries.mapPolygons.template.events.on("pointerover", async (ev) => {
       clearTimeout(hoverTimeout);
-      hoverTimeout = setTimeout(() => {
+      hoverTimeout = setTimeout(async () => {
         const polygon = ev.target;
         const countryName = polygon.dataItem.dataContext.name;
 
@@ -81,21 +81,19 @@ function initGlobe() {
         const lat = center.latitude;
         const lng = center.longitude;
 
-        fetchAndFormatTime(
+        const [formatted] = await fetchAndFormatTime(
           lat,
           lng,
           countryName,
           true,
-          isAmPmOn,
-          (formatted) => {
-            polygon.set("tooltipText", `[bold]{name}[/]\n${formatted}`);
-            polygon.showTooltip();
-          }
+          isAmPmOn
         );
+        polygon.set("tooltipText", `[bold]{name}[/]\n${formatted}`);
+        polygon.showTooltip();
       }, 150);
     });
 
-    polygonSeries.mapPolygons.template.events.on("click", (ev) => {
+    polygonSeries.mapPolygons.template.events.on("click", async (ev) => {
       const polygon = ev.target;
       const countryName = polygon.dataItem.dataContext.name;
       const recentTimes = document.getElementById("recentTimes");
@@ -103,15 +101,9 @@ function initGlobe() {
         recentTimes.querySelectorAll(`[data-country]`)
       );
 
-      const isSuchCard = existingCards.some(
-        (card) => card.dataset.country === countryName
-      );
-      if (isSuchCard) return;
-
-      if (multiZoneCountries.includes(countryName)) {
-        polygon.set("tooltipText", `[bold]{name}[/]`);
+      if (existingCards.some((card) => card.dataset.country === countryName))
         return;
-      }
+      if (multiZoneCountries.includes(countryName)) return;
 
       recentTimesTitle.classList.remove("hidden");
       removeBtn.classList.remove("hidden");
@@ -123,62 +115,41 @@ function initGlobe() {
 
       const lat = center.latitude;
       const lng = center.longitude;
+      const [formatted, rawDate] = await fetchAndFormatTime(
+        lat,
+        lng,
+        countryName,
+        true,
+        isAmPmOn
+      );
 
-      fetch(
-        `https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=j_sully`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          const serverNow = new Date(data.time);
-          const localNow = new Date();
-          serverNow.setSeconds(localNow.getSeconds());
+      const now = rawDate || new Date();
+      const weekday = now.toLocaleDateString("en-US", { weekday: "long" });
 
-          const weekday = serverNow.toLocaleDateString("en-US", {
-            weekday: "long",
-          });
+      const card = document.createElement("div");
+      card.className =
+        "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
+      card.dataset.country = countryName;
+      card.innerHTML = `
+        <h3 class="font-bold text-lg mb-2">${countryName}</h3>
+        <p class="text-sm">${now.toLocaleDateString()}</p>
+        <p class="text-sm live-clock">${now.toLocaleTimeString()}</p>
+        <p class="text-sm">${weekday}</p>
+      `;
 
-          const card = document.createElement("div");
-          card.className =
-            "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
-          card.dataset.country = countryName;
-          card.innerHTML = `
-            <h3 class="font-bold text-lg mb-2">${data.countryName}</h3>
-            <p class="text-sm">${serverNow.toLocaleDateString()}</p>
-            <p class="text-sm live-clock">${serverNow.toLocaleTimeString()}</p>
-            <p class="text-sm">${weekday}</p>
-          `;
+      recentTimes.appendChild(card);
 
-          recentTimes.appendChild(card);
+      const liveClock = card.querySelector(".live-clock");
+      let currentTime = new Date(now);
+      const intervalId = setInterval(() => {
+        currentTime.setSeconds(currentTime.getSeconds() + 1);
+        liveClock.textContent = isAmPmOn
+          ? currentTime.toLocaleTimeString("en-US", { hour12: true })
+          : currentTime.toLocaleTimeString();
+      }, 1000);
 
-          const liveClock = card.querySelector(".live-clock");
-          let currentTime = new Date(serverNow);
-          const intervalId = setInterval(() => {
-            currentTime.setSeconds(currentTime.getSeconds() + 1);
-            liveClock.textContent = isAmPmOn
-              ? currentTime.toLocaleTimeString("en-US", { hour12: true })
-              : currentTime.toLocaleTimeString();
-          }, 1000);
-
-          card.dataset.intervalId = intervalId;
-        })
-        .catch((err) => {
-          console.error("GeoNames API error:", err);
-        });
+      card.dataset.intervalId = intervalId;
     });
-
-    // polygonSeries.mapPolygons.template.events.on("tooltipshown", (ev) => {
-    //   const tooltip = ev.target.get("tooltip");
-    //   if (tooltip) {
-    //     tooltip.get("background").setAll({
-    //       fill: am5.color("#293e70"),
-    //       stroke: am5.color("#ffffff"),
-    //       strokeWidth: 1,
-    //       fillOpacity: 1,
-    //       cornerRadius: 8,
-    //     });
-    //     tooltip.label.setAll({ fill: am5.color(0xffffff) });
-    //   }
-    // });
 
     const circleSeries = chart.series.push(
       am5map.MapPointSeries.new(root, {
@@ -197,21 +168,19 @@ function initGlobe() {
         tooltipPosition: "pointer",
       });
 
-      circle.events.on("pointerover", () => {
+      circle.events.on("pointerover", async () => {
         clearTimeout(hoverTimeout);
-        hoverTimeout = setTimeout(() => {
+        hoverTimeout = setTimeout(async () => {
           const { city, latitude, longitude } = dataItem.dataContext;
-          fetchAndFormatTime(
+          const [formatted] = await fetchAndFormatTime(
             latitude,
             longitude,
             city,
             false,
-            true,
-            (formatted) => {
-              circle.set("tooltipText", formatted);
-              circle.showTooltip();
-            }
+            isAmPmOn
           );
+          circle.set("tooltipText", formatted);
+          circle.showTooltip();
         }, 200);
       });
 
@@ -226,8 +195,8 @@ function initGlobe() {
       duration: 50000,
       loops: Infinity,
     });
+    setTimeout(() => globeRotation.stop(), 180000);
 
-    setTimeout(() => globeRotation.stop(), 180000); // Stop after 3 mins
     chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
     chart.appear(1000, 100);
   });

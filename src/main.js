@@ -32,12 +32,13 @@ let currentBackgroundUrl = "src/assets/desert.jpg"; // store current background 
 let worldMapRoot = null; //store world map root element globally
 let isWorldMapInitialized = false; // flag to check if world map is initialized
 export let isAmPmOn = false; // flag to check if AM/PM format is on
+let particleTimeout = null; // store timeout for particles
 // Functions
 function initParticles() {
   if (window.particlesJS) {
     particlesJS("particles-js", {
       particles: {
-        number: { value: 100, density: { enable: true, value_area: 800 } },
+        number: { value: 50, density: { enable: true, value_area: 800 } },
         color: { value: "#ffffff" },
         shape: { type: "circle" },
         opacity: { value: 0.7, random: false },
@@ -86,6 +87,11 @@ function initParticles() {
       },
       retina_detect: true,
     });
+
+    if (particleTimeout) clearTimeout(particleTimeout);
+    particleTimeout = setTimeout(() => {
+      destroyParticles();
+    }, 180000); // Stop after 3 min
   }
 }
 
@@ -269,7 +275,6 @@ lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
-  initParticles(); // 💥 move here, initialize ONCE when page loads
   startRain(); // Start rain effect
   // Swiper init
   const swiper = new Swiper(".swiper", {
