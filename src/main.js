@@ -22,6 +22,7 @@ const secondSlider = document.getElementById("secondSlider");
 const recentTimesTitle = document.getElementById("recentTimesTitle");
 const timeFormatElement = document.getElementById("timeFormat");
 const timeFormatToggle = document.getElementById("timeFormatToggle");
+const infoToggle = document.getElementById("infoToggle");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
@@ -289,6 +290,8 @@ document.addEventListener("DOMContentLoaded", () => {
     pagination: {
       el: ".swiper-pagination",
       clickable: true,
+      bulletClass: "swiper-pagination-bullet",
+      bulletActiveClass: "swiper-pagination-bullet-active",
       renderBullet: function (index, className) {
         const tooltips = ["Timer", "Global Time"];
         return `<span class="${className}" data-tooltip="${tooltips[index]}"></span>`;
@@ -419,5 +422,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // AM/PM toggle button
   timeFormatToggle.addEventListener("change", () => {
     isAmPmOn = timeFormatToggle.checked;
+  });
+
+  infoToggle.addEventListener("click", () => {
+    const info = document.getElementById("infoTooltip");
+    info.classList.toggle("hidden");
+    infoToggle.classList.toggle("info-active");
   });
 });

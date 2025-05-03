@@ -128,10 +128,10 @@ function initGlobe() {
 
       const card = document.createElement("div");
       card.className =
-        "bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#ffffff] bg-[#293e70] border-2 border-white font-bold shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
+        "bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#ffffff] bg-[#293e70] border-2 border-white shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
       card.dataset.country = countryName;
       card.innerHTML = `
-        <h3 class="text-lg mb-2 text-[#ffcc00]">${countryName}</h3>
+        <h3 class="text-lg mb-2 font-bold text-[#ffcc00]">${countryName}</h3>
         <p class="text-sm font-sans">${now.toLocaleDateString("en-US", {
           day: "numeric",
           month: "long",
