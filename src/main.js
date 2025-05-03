@@ -145,6 +145,7 @@ function countdown() {
 
 function start() {
   playBeep();
+  startBtn.classList.add("hidden");
   if (timer !== null) clearInterval(timer);
   if (isCountdown) {
     disableCountdownPanel();
@@ -157,6 +158,7 @@ function start() {
 function stopTime() {
   playBeep();
   clearInterval(timer);
+  startBtn.classList.remove("hidden");
 }
 
 function reset() {
