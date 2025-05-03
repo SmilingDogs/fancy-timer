@@ -5,7 +5,7 @@ body {
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
-  font-family: "Orbitron";
+  font-family: "Orbitron", sans-serif;
 }
 /* Buttons */
 .btn-primary {

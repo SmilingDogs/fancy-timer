@@ -128,19 +128,25 @@ function initGlobe() {
 
       const card = document.createElement("div");
       card.className =
-        "bg-white bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#0f172a] shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
+        "bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#ffffff] bg-[#293e70] border-2 border-white font-bold shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
       card.dataset.country = countryName;
       card.innerHTML = `
-        <h3 class="font-bold text-lg mb-2">${countryName}</h3>
-        <p class="text-sm">${now.toLocaleDateString()}</p>
-        <p class="text-sm live-clock">${now.toLocaleTimeString()}</p>
-        <p class="text-sm">${weekday}</p>
+        <h3 class="text-lg mb-2 text-[#ffcc00]">${countryName}</h3>
+        <p class="text-sm font-sans">${now.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}</p>
+        <p class="text-sm live-clock font-sans">${now.toLocaleTimeString()}</p>
+        <p class="text-sm font-sans">${weekday}</p>
       `;
 
       recentTimes.appendChild(card);
 
       const liveClock = card.querySelector(".live-clock");
       let currentTime = new Date(now);
+      let currentSeconds = new Date().getSeconds();
+      currentTime.setSeconds(currentSeconds);
       const intervalId = setInterval(() => {
         currentTime.setSeconds(currentTime.getSeconds() + 1);
         liveClock.textContent = isAmPmOn
