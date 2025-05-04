@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 html {
-  font-size: 16px;
+  font-size: 16px !important;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
   zoom: 1; /* avoids browser quirks */
 }
 
@@ -11,7 +13,18 @@ body {
   box-sizing: border-box;
   overflow: hidden;
   font-family: "Orbitron", sans-serif;
+  min-height: 100vh;
+  /* mobile viewport bug fix */
+  min-height: -webkit-fill-available;
 }
+
+/* Support for Safari */
+@supports (-webkit-touch-callout: none) {
+  body {
+    min-height: -webkit-fill-available;
+  }
+}
+
 /* Buttons */
 .btn-primary {
   font-weight: bold;
