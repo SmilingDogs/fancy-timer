@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
       bulletClass: "swiper-pagination-bullet",
       bulletActiveClass: "swiper-pagination-bullet-active",
       renderBullet: function (index, className) {
-        const tooltips = ["Timer", "Global Time"];
+        const tooltips = ["Timer", "World Times"];
         return `<span class="${className}" data-tooltip="${tooltips[index]}"></span>`;
       },
     },
