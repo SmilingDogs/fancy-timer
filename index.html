@@ -18,301 +18,292 @@
     <link href="/src/styles.css" rel="stylesheet" />
   </head>
   <body class="bg-gray-100 min-h-screen relative overflow-hidden">
-    <!-- Background container -->
-    <div
-      class="fixed inset-0 bg-no-repeat bg-cover bg-center"
-      id="background"
-      style="background-image: url('/assets/desert.jpg')"
-    ></div>
-
-    <!-- Main content -->
-    <div class="relative z-[1000] min-h-screen">
-      <!-- Swiper container -->
-      <div class="swiper h-screen w-full">
-        <div class="swiper-wrapper">
-          <!-- First Slide - Timer -->
-          <div class="swiper-slide relative">
-            <!-- Main content container -->
-            <div class="flex items-center justify-center min-h-screen p-4">
-              <!-- Timer container -->
-              <div
-                class="bg-white/20 backdrop-blur-md p-8 pt-4 rounded-lg shadow-xl w-full max-w-md text-center"
-              >
-                <!-- Timer Display -->
-                <div
-                  id="display"
-                  class="text-7xl font-['Orbitron'] mb-6 animate-pulse"
-                >
-                  00:00:00
-                </div>
-                <!-- Timer control buttons -->
-                <div class="timer-controls flex justify-center space-x-4 mb-6">
-                  <button
-                    id="startBtn"
-                    class="btn-primary bg-transparent text-black"
-                  >
-                    Start
-                  </button>
-                  <button
-                    id="stopBtn"
-                    class="btn-secondary bg-transparent text-black"
-                  >
-                    Stop
-                  </button>
-                  <button
-                    id="resetBtn"
-                    class="btn-danger bg-transparent text-black"
-                  >
-                    Reset
-                  </button>
-                  <button
-                    id="lapBtn"
-                    class="btn-primary bg-transparent text-black"
-                  >
-                    Lap
-                  </button>
-                </div>
-                <!-- Laps recordings -->
-                <div class="text-left max-h-30 overflow-y-auto">
-                  <ul id="laps" class="text-600 space-y-2"></ul>
-                </div>
-
-                <div class="flex justify-between items-center mt-4">
-                  <!-- Rain Toggle button -->
-                  <div class="flex justify-end pb-4">
-                    <label class="relative inline-block w-28 h-10">
-                      <input
-                        type="checkbox"
-                        id="rainToggle"
-                        class="peer hidden"
-                      />
-
-                      <!-- Background -->
-                      <span
-                        class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
-                      ></span>
-                      <!-- Toggle circle -->
-                      <span
-                        class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-16"
-                      ></span>
-                      <!-- TIMER text -->
-                      <span
-                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
-                      >
-                        RAIN!
-                      </span>
-                      <!-- COUNTDOWN text -->
-                      <span
-                        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
-                      >
-                        NO RAIN
-                      </span>
-                    </label>
-                  </div>
-                  <!-- Mode Toggle button -->
-                  <div class="flex justify-end pb-4">
-                    <label class="relative inline-block w-32 h-10">
-                      <input
-                        type="checkbox"
-                        id="modeToggle"
-                        class="peer hidden"
-                      />
-
-                      <!-- Background -->
-                      <span
-                        class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
-                      ></span>
-                      <!-- Toggle circle -->
-                      <span
-                        class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-20"
-                      ></span>
-                      <!-- TIMER text -->
-                      <span
-                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
-                      >
-                        TIMER
-                      </span>
-                      <!-- COUNTDOWN text -->
-                      <span
-                        class="absolute left-1 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-wider"
-                      >
-                        COUNTDOWN
-                      </span>
-                    </label>
-                  </div>
-                  <!-- Timer colors selector -->
-                  <div class="flex justify-end pb-4">
-                    <select
-                      id="colorSelector"
-                      class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                    >
-                      <option value="text-black" class="hover:bg-gray-500">
-                        Black
-                      </option>
-                      <option value="text-white">White</option>
-                      <option value="text-yellow-500">Yellow</option>
-                      <option value="text-blue-500">Blue</option>
-                      <option value="text-red-500">Red</option>
-                    </select>
-                  </div>
-                </div>
-
-                <audio
-                  id="beep"
-                  src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-                ></audio>
-              </div>
-              <!-- Countdown Settings Panel -->
-              <div
-                id="countdownPanel"
-                class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-4"
-              >
-                <div class="flex flex-col items-center">
-                  <div class="text-sm text-white font-['Orbitron']">Hours</div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="24"
-                    value="0"
-                    class="vertical-slider"
-                    id="hourSlider"
-                  />
-                </div>
-                <div class="flex flex-col items-center">
-                  <div class="text-sm text-white font-['Orbitron']">
-                    Minutes
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="60"
-                    value="0"
-                    class="vertical-slider"
-                    id="minuteSlider"
-                  />
-                </div>
-                <div class="flex flex-col items-center">
-                  <div class="text-sm text-white font-['Orbitron']">
-                    Seconds
-                  </div>
-                  <input
-                    type="range"
-                    min="1"
-                    max="60"
-                    value="1"
-                    class="vertical-slider"
-                    id="secondSlider"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Second Slide - Global Times -->
-          <div class="swiper-slide relative" data-slide="world-times">
-            <!-- Background with particles -->
-            <div id="particles-js" class="absolute inset-0"></div>
+    <!-- Swiper container -->
+    <div class="swiper h-screen w-full">
+      <div class="swiper-wrapper">
+        <!-- First Slide - Timer -->
+        <div class="swiper-slide relative">
+          <!-- Background container -->
+          <div
+            class="absolute inset-0 bg-no-repeat bg-cover z-100 top-0 left-0 w-full"
+            id="background"
+          ></div>
+          <!-- Main content container -->
+          <div
+            class="relative z-500 flex items-center justify-center min-h-screen p-4"
+          >
+            <!-- Stopwatch/Timer container -->
             <div
-              class="absolute inset-0 bg-no-repeat bg-cover bg-center bg-[url(/assets/earth.jpg)]"
-            ></div>
-
-            <!-- Global Time slide content -->
-            <div class="flex flex-col items-center min-h-screen p-6">
-              <div class="flex items-start gap-4">
-                <h1 class="text-3xl font-bold text-white mb-3 z-2">
-                  World Times
-                </h1>
+              class="bg-transparent p-8 pt-4 rounded-lg shadow-xl w-full max-w-md text-center"
+            >
+              <!-- Timer Display -->
+              <div
+                id="display"
+                class="text-7xl font-['Orbitron'] mb-6 animate-pulse"
+              >
+                00:00:00
+              </div>
+              <!-- Timer control buttons -->
+              <div class="timer-controls flex justify-center space-x-4 mb-6">
                 <button
-                  id="infoToggle"
-                  class="w-6 h-6 rounded-full border border-white text-white text-sm font-bold flex items-center justify-center hover:bg-white hover:text-[#0f172a] transition"
-                  title="How it works"
+                  id="startBtn"
+                  class="btn-primary bg-transparent text-black"
                 >
-                  i
+                  Start
                 </button>
-                <div
-                  id="infoTooltip"
-                  class="absolute right-[-300px] top-[20px] w-5/4 hidden mt-2 text-sm text-gray-300 bg-[#0f172a] bg-opacity-80 p-4 rounded-lg shadow-md max-w-xl"
+                <button
+                  id="stopBtn"
+                  class="btn-secondary bg-transparent text-black"
                 >
-                  🌍 Welcome to World Times! Hover over a country or city ( in
-                  mutiple time zone countries ) to see its current local time.
-                  Click a country to pin its live clock below.
+                  Stop
+                </button>
+                <button
+                  id="resetBtn"
+                  class="btn-danger bg-transparent text-black"
+                >
+                  Reset
+                </button>
+                <button
+                  id="lapBtn"
+                  class="btn-primary bg-transparent text-black"
+                >
+                  Lap
+                </button>
+              </div>
+              <!-- Laps recordings -->
+              <div class="text-left max-h-30 overflow-y-auto">
+                <ul id="laps" class="text-600 space-y-2"></ul>
+              </div>
+
+              <div class="flex justify-between items-center mt-4">
+                <!-- Rain Toggle button -->
+                <div class="flex justify-end pb-4">
+                  <label class="relative inline-block w-28 h-10">
+                    <input
+                      type="checkbox"
+                      id="rainToggle"
+                      class="peer hidden"
+                    />
+
+                    <!-- Background -->
+                    <span
+                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
+                    ></span>
+                    <!-- Toggle circle -->
+                    <span
+                      class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-16"
+                    ></span>
+                    <!-- TIMER text -->
+                    <span
+                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                    >
+                      RAIN!
+                    </span>
+                    <!-- COUNTDOWN text -->
+                    <span
+                      class="absolute left-3 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
+                    >
+                      NO RAIN
+                    </span>
+                  </label>
+                </div>
+                <!-- Mode Toggle button -->
+                <div class="flex justify-end pb-4">
+                  <label class="relative inline-block w-32 h-10">
+                    <input
+                      type="checkbox"
+                      id="modeToggle"
+                      class="peer hidden"
+                    />
+
+                    <!-- Background -->
+                    <span
+                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
+                    ></span>
+                    <!-- Toggle circle -->
+                    <span
+                      class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-20"
+                    ></span>
+                    <!-- TIMER text -->
+                    <span
+                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                    >
+                      TIMER
+                    </span>
+                    <!-- COUNTDOWN text -->
+                    <span
+                      class="absolute left-1 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-wider"
+                    >
+                      COUNTDOWN
+                    </span>
+                  </label>
+                </div>
+                <!-- Timer colors selector -->
+                <div class="flex justify-end pb-4">
+                  <select
+                    id="colorSelector"
+                    class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  >
+                    <option value="text-black" class="hover:bg-gray-500">
+                      Black
+                    </option>
+                    <option value="text-white">White</option>
+                    <option value="text-yellow-500">Yellow</option>
+                    <option value="text-blue-500">Blue</option>
+                    <option value="text-red-500">Red</option>
+                  </select>
                 </div>
               </div>
-              <!-- 2D World Map -->
-              <!-- <div
-              id="worldMap"
-              class="w-full xl:max-w-5xl max-w-4xl xl:h-[475px] h-[375px] rounded-lg overflow-hidden bg-transparent z-5"
-            ></div> -->
-              <!-- 3D Globus -->
-              <div
-                id="globeDiv"
-                class="w-full xl:max-w-5xl max-w-4xl xl:h-[500px] h-[375px] z-[500]"
-                style="width: 800px; height: 500px"
-              ></div>
-              <!-- Live Times Section -->
-              <div
-                id="recentTimesSection"
-                class="mt-2 xl:mt-4 w-full xl:max-w-5xl max-w-4xl flex items-start xl:gap-4 gap-2 xl:px-4 px-2 z-5"
-              >
-                <div
-                  class="flex flex-col justify-between items-start min-w-[120px] h-[125px]"
-                >
-                  <span
-                    class="text-white text-l font-semibold hidden"
-                    id="recentTimesTitle"
-                    >Live Times:
-                  </span>
-                  <!-- Time Format toggle -->
-                  <div class="justify-end pb-4 hidden" id="timeFormat">
-                    <label class="relative inline-block w-24 h-10">
-                      <!--prettier-ignore-->
-                      <input type="checkbox" id="timeFormatToggle" class="peer hidden" />
-                      <!-- Background -->
-                      <span
-                        class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-[#60a5fa] transition-colors duration-300"
-                      ></span>
-                      <!-- Toggle circle -->
-                      <span
-                        class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-13"
-                      ></span>
-                      <!-- 24H text -->
-                      <span
-                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-[#0f172a] opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
-                      >
-                        24H
-                      </span>
-                      <!-- AM/PM text -->
-                      <span
-                        class="absolute left-2 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-[#0f172a] opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
-                      >
-                        AM/PM
-                      </span>
-                    </label>
-                  </div>
-                  <button
-                    class="bg-[#60a5fa] text-[#0f172a] px-2 py-1 hidden rounded-md w-2/3 text-xs"
-                    id="removeCardsBtn"
-                  >
-                    Remove
-                  </button>
-                </div>
-                <div
-                  id="recentTimes"
-                  class="xl:w-[860px] w-[calc(100%-160px)] h-[125px] flex xl:gap-4 gap-3 flex-wrap overflow-y-auto xl:pr-4 pr-2"
-                ></div>
+
+              <audio
+                id="beep"
+                src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+              ></audio>
+            </div>
+            <!-- Countdown Settings Panel -->
+            <div
+              id="countdownPanel"
+              class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-4"
+            >
+              <div class="flex flex-col items-center">
+                <div class="text-sm text-white font-['Orbitron']">Hours</div>
+                <input
+                  type="range"
+                  min="0"
+                  max="24"
+                  value="0"
+                  class="vertical-slider"
+                  id="hourSlider"
+                />
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="text-sm text-white font-['Orbitron']">Minutes</div>
+                <input
+                  type="range"
+                  min="0"
+                  max="60"
+                  value="0"
+                  class="vertical-slider"
+                  id="minuteSlider"
+                />
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="text-sm text-white font-['Orbitron']">Seconds</div>
+                <input
+                  type="range"
+                  min="1"
+                  max="60"
+                  value="1"
+                  class="vertical-slider"
+                  id="secondSlider"
+                />
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Pagination -->
-        <div class="swiper-pagination flex flex-col gap-4 pr-2"></div>
-      </div>
-    </div>
+        <!-- Second Slide - Global Times -->
+        <div class="swiper-slide relative">
+          <!-- Background with particles -->
+          <div
+            id="particles-js"
+            class="absolute inset-0 w-full h-full z-1"
+          ></div>
+          <div
+            class="absolute inset-0 bg-no-repeat bg-cover bg-center z-0 bg-[url(/assets/earth.jpg)]"
+          ></div>
+          <!-- Global Time slide content -->
+          <div class="flex flex-col items-center min-h-screen p-6">
+            <div class="relative flex items-start gap-4">
+              <h1 class="text-3xl font-bold text-white mb-3 z-2">
+                World Times
+              </h1>
+              <button
+                id="infoToggle"
+                class="w-6 h-6 rounded-full border border-white text-white text-sm font-bold flex items-center justify-center hover:bg-white hover:text-[#0f172a] transition z-2"
+                title="How it works"
+              >
+                i
+              </button>
+              <div
+                id="infoTooltip"
+                class="absolute right-[-300px] top-[20px] w-5/4 hidden mt-2 text-sm text-gray-300 bg-[#0f172a] bg-opacity-80 p-4 rounded-lg shadow-md max-w-xl z-10"
+              >
+                🌍 Welcome to World Times! Hover over a country or city ( in
+                mutiple time zone countries ) to see its current local time.
+                Click a country to pin its live clock below.
+              </div>
+            </div>
 
-    <!-- Thumbnail gallery -->
+            <!-- 2D World Map -->
+            <!-- <div
+              id="worldMap"
+              class="w-full xl:max-w-5xl max-w-4xl xl:h-[475px] h-[375px] rounded-lg overflow-hidden bg-transparent z-5"
+            ></div> -->
+            <!-- 3D Globus -->
+            <div id="globeDiv" class="w-2/3 xl:h-[475px] h-[360px] z-5"></div>
+
+            <!-- Live Times Section -->
+            <div
+              id="recentTimesSection"
+              class="mt-2 xl:mt-4 w-full xl:max-w-5xl max-w-4xl flex items-start xl:gap-4 gap-2 xl:px-4 px-2 z-5"
+            >
+              <div
+                class="flex flex-col justify-between items-start min-w-[120px] h-[125px]"
+              >
+                <span
+                  class="text-white text-l font-semibold hidden"
+                  id="recentTimesTitle"
+                  >Live Times:
+                </span>
+                <!-- Time Format toggle -->
+                <div class="justify-end pb-4 hidden" id="timeFormat">
+                  <label class="relative inline-block w-24 h-10">
+                    <!--prettier-ignore-->
+                    <input type="checkbox" id="timeFormatToggle" class="peer hidden" />
+                    <!-- Background -->
+                    <span
+                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-[#60a5fa] transition-colors duration-300"
+                    ></span>
+                    <!-- Toggle circle -->
+                    <span
+                      class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-13"
+                    ></span>
+                    <!-- 24H text -->
+                    <span
+                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-[#0f172a] opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                    >
+                      24H
+                    </span>
+                    <!-- AM/PM text -->
+                    <span
+                      class="absolute left-2 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-[#0f172a] opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
+                    >
+                      AM/PM
+                    </span>
+                  </label>
+                </div>
+                <button
+                  class="bg-[#60a5fa] text-[#0f172a] px-2 py-1 hidden rounded-md w-2/3 text-xs"
+                  id="removeCardsBtn"
+                >
+                  Remove
+                </button>
+              </div>
+              <div
+                id="recentTimes"
+                class="xl:w-[860px] w-[calc(100%-160px)] h-[125px] flex xl:gap-4 gap-3 flex-wrap overflow-y-auto xl:pr-4 pr-2"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Pagination -->
+      <div class="swiper-pagination flex flex-col gap-4 pr-2"></div>
+    </div>
+    <!-- Thumbnail gallery  -->
     <div
-      class="fixed bottom-4 left-4 flex space-x-2 z-[2000]"
+      class="fixed bottom-4 left-4 flex space-x-2 z-500"
       id="thumbnailsContainer"
     >
       <img
