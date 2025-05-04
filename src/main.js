@@ -1,6 +1,7 @@
 // Grab elements
 // import initWorldMap from "./initWorldMap";
 import initGlobe, { isGlobeInitialized } from "./initGlobe"; // Add import
+import "./styles.css";
 const display = document.getElementById("display");
 const colorSelector = document.getElementById("colorSelector");
 const laps = document.getElementById("laps");
@@ -29,7 +30,7 @@ let timer = null;
 let lapsCount = 0;
 let isCountdown = false;
 let rainyDay = null; // store rainyDay instance globally
-let currentBackgroundUrl = "/assets/desert.jpg"; // store current background globally
+let currentBackgroundUrl = "./assets/desert.jpg"; // store current background globally
 // let worldMapRoot = null; //store world map root element globally
 // let isWorldMapInitialized = false; // flag to check if world map is initialized
 export let isAmPmOn = false; // flag to check if AM/PM format is on

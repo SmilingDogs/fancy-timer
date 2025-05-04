@@ -6,6 +6,13 @@ export default {
       fontFamily: {
         orbitron: ["'Orbitron'", "sans-serif"],
       },
+      fontSize: {
+        "7xl": "5rem",
+        "8xl": "6rem",
+      },
+      maxWidth: {
+        "screen-3xl": "1920px",
+      },
     },
   },
   safelist: [
@@ -22,6 +29,12 @@ export default {
     "text-sm",
     "text-lg",
     "text-base",
+    // Sizes & Layout
+    "text-7xl",
+    "text-8xl",
+    "w-2/3",
+    "max-w-4xl",
+    "xl:max-w-5xl",
 
     // Widths / Heights
     "w-2/3",
@@ -103,6 +116,6 @@ export default {
     "shadow-xl",
 
     // Custom image backgrounds
-    "bg-[url('/assets/earth.jpg')]",
+    "bg-[url('./assets/earth.jpg')]",
   ],
 };
