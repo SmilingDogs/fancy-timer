@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 html {
   font-size: 16px !important;
@@ -147,6 +149,7 @@ body {
   height: 100%;
   background-color: transparent;
   pointer-events: auto;
+  z-index: 1000;
 }
 
 .particles-js-canvas-el {
@@ -159,4 +162,91 @@ body {
 .info-active {
   background-color: white;
   color: #0f172a;
+}
+
+/* Override swiper slide background */
+.swiper-slide {
+  background: transparent !important;
+}
+
+/* Ensure timer content visibility */
+.backdrop-blur-md {
+  backdrop-filter: blur(8px);
+}
+
+/* Ensure thumbnails are clickable */
+#thumbnailsContainer img {
+  position: relative;
+  z-index: 2000;
+}
+
+/* Rain canvas positioning */
+canvas {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: 500;
+}
+
+/* Globe interactions */
+#globeDiv {
+  pointer-events: auto !important;
+  cursor: pointer;
+  touch-action: auto !important;
+}
+
+#globeDiv * {
+  pointer-events: auto !important;
+}
+
+/* Ensure proper recent times cards display */
+#recentTimes {
+  pointer-events: auto;
+  min-height: 125px;
+}
+
+/* Globe and World Times slide specific styles */
+.swiper-slide[data-slide="world-times"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#globeDiv {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1500;
+}
+
+#globeDiv * {
+  pointer-events: all !important;
+}
+
+.am5-main-container {
+  z-index: 1500 !important;
+}
+
+#particles-js {
+  z-index: 1000;
+}
+
+#recentTimesSection {
+  position: relative;
+  z-index: 1600;
+  pointer-events: all;
+}
+
+/* Fix canvas positioning for globe */
+#globeDiv canvas {
+  position: relative !important;
+}
+
+/* Only fix rain effect canvas */
+#background + canvas {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: 500;
 }
