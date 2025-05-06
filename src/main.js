@@ -1,7 +1,6 @@
 // Grab elements
 // import initWorldMap from "./initWorldMap";
 import initGlobe, { isGlobeInitialized } from "./initGlobe"; // Add import
-import "./styles.css";
 const display = document.getElementById("display");
 const colorSelector = document.getElementById("colorSelector");
 const laps = document.getElementById("laps");
