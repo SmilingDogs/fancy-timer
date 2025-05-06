@@ -120,7 +120,7 @@ function countdown() {
   if (hours === 0 && minutes === 0 && seconds === 0) {
     clearInterval(timer);
     display.textContent = "Time is up!";
-    display.classList.add("text-[48px]", "font-semibold");
+    display.classList.add("text-[50px]", "3xl:text-[70px]", "font-semibold");
     const audio = new Audio(
       "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
     );
@@ -166,7 +166,7 @@ function reset() {
   clearInterval(timer);
   [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
   laps.innerHTML = "";
-  display.classList.remove("text-[48px]", "font-semibold");
+  display.classList.remove("text-[50px]", "3xl:text-[70px]", "font-semibold");
   display.textContent = "00:00:00";
   startBtn.classList.remove("hidden");
   stopBtn.classList.remove("hidden");

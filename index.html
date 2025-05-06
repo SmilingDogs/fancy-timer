@@ -31,17 +31,19 @@
           >
             <!-- Stopwatch/Timer container -->
             <div
-              class="bg-transparent p-8 pt-4 rounded-lg shadow-xl w-full max-w-md text-center"
+              class="bg-transparent p-8 pt-4 rounded-lg shadow-xl w-full max-w-md 3xl:max-w-xl text-center"
             >
               <!-- Timer Display -->
               <div
                 id="display"
-                class="text-7xl font-['Orbitron'] mb-6 animate-pulse"
+                class="text-7xl 3xl:text-8xl font-['Orbitron'] mb-6 animate-pulse"
               >
                 00:00:00
               </div>
               <!-- Timer control buttons -->
-              <div class="timer-controls flex justify-center space-x-4 mb-6">
+              <div
+                class="timer-controls flex justify-center 3xl:text-2xl space-x-4 mb-6"
+              >
                 <button
                   id="startBtn"
                   class="btn-primary bg-transparent text-black"
@@ -68,14 +70,16 @@
                 </button>
               </div>
               <!-- Laps recordings -->
-              <div class="text-left max-h-30 overflow-y-auto">
+              <div class="text-left max-h-30 overflow-y-auto 3xl:text-xl">
                 <ul id="laps" class="text-600 space-y-2"></ul>
               </div>
 
               <div class="flex justify-between items-center mt-4">
                 <!-- Rain Toggle button -->
                 <div class="flex justify-end pb-4">
-                  <label class="relative inline-block w-28 h-10">
+                  <label
+                    class="relative inline-block w-30 3xl:w-36 h-10 3xl:h-14"
+                  >
                     <input
                       type="checkbox"
                       id="rainToggle"
@@ -88,25 +92,27 @@
                     ></span>
                     <!-- Toggle circle -->
                     <span
-                      class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-16"
+                      class="absolute top-1 3xl:top-2 left-2 w-8 3xl:w-10 h-8 3xl:h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-18 3xl:peer-checked:translate-x-22"
                     ></span>
-                    <!-- TIMER text -->
+                    <!-- RAIN text -->
                     <span
-                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                      class="3xl:text-base absolute right-4 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
                     >
-                      RAIN!
+                      Rain!
                     </span>
-                    <!-- COUNTDOWN text -->
+                    <!-- NO RAIN text -->
                     <span
-                      class="absolute left-3 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
+                      class="3xl:text-base absolute left-3 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
                     >
-                      NO RAIN
+                      No Rain
                     </span>
                   </label>
                 </div>
                 <!-- Mode Toggle button -->
                 <div class="flex justify-end pb-4">
-                  <label class="relative inline-block w-32 h-10">
+                  <label
+                    class="relative inline-block w-34 3xl:w-43 h-10 3xl:h-14"
+                  >
                     <input
                       type="checkbox"
                       id="modeToggle"
@@ -119,24 +125,24 @@
                     ></span>
                     <!-- Toggle circle -->
                     <span
-                      class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-20"
+                      class="absolute top-1 3xl:top-2 left-2 w-8 3xl:w-10 h-8 3xl:h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-22 3xl:peer-checked:translate-x-29"
                     ></span>
-                    <!-- TIMER text -->
+                    <!-- Timer text -->
                     <span
-                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                      class="3xl:text-base absolute right-4 3xl:right-10 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
                     >
-                      TIMER
+                      Timer
                     </span>
-                    <!-- COUNTDOWN text -->
+                    <!-- Countdown text -->
                     <span
-                      class="absolute left-1 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-wider"
+                      class="3xl:text-base absolute top-1/2 left-2.5 3xl:left-2 transform -translate-y-1/2 text-[12px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
                     >
-                      COUNTDOWN
+                      Countdown
                     </span>
                   </label>
                 </div>
                 <!-- Timer colors selector -->
-                <div class="flex justify-end pb-4">
+                <div class="flex justify-end pb-4 3xl:text-xl">
                   <select
                     id="colorSelector"
                     class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -160,38 +166,44 @@
             <!-- Countdown Settings Panel -->
             <div
               id="countdownPanel"
-              class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-4"
+              class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-6 3xl:space-y-10"
             >
-              <div class="flex flex-col items-center">
-                <div class="text-sm text-white font-['Orbitron']">Hours</div>
+              <div class="flex flex-col items-center gap-2 3xl:gap-4">
+                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
+                  Hours
+                </div>
                 <input
                   type="range"
                   min="0"
                   max="24"
                   value="0"
-                  class="vertical-slider"
+                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
                   id="hourSlider"
                 />
               </div>
-              <div class="flex flex-col items-center">
-                <div class="text-sm text-white font-['Orbitron']">Minutes</div>
+              <div class="flex flex-col items-center gap-2 3xl:gap-4">
+                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
+                  Minutes
+                </div>
                 <input
                   type="range"
                   min="0"
-                  max="60"
+                  max="59"
                   value="0"
-                  class="vertical-slider"
+                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
                   id="minuteSlider"
                 />
               </div>
-              <div class="flex flex-col items-center">
-                <div class="text-sm text-white font-['Orbitron']">Seconds</div>
+              <div class="flex flex-col items-center gap-2 3xl:gap-4">
+                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
+                  Seconds
+                </div>
                 <input
                   type="range"
-                  min="1"
-                  max="60"
+                  min="0"
+                  max="59"
                   value="1"
-                  class="vertical-slider"
+                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
                   id="secondSlider"
                 />
               </div>
@@ -307,31 +319,31 @@
         src="/assets/amalfi-night.jpg"
         alt="Background 2"
         data-bg="/assets/amalfi-night.jpg"
-        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
       <img
         src="/assets/bridge.jpg"
         alt="Background 3"
         data-bg="/assets/bridge.jpg"
-        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
       <img
         src="/assets/desert.jpg"
         alt="Background 4"
         data-bg="/assets/desert.jpg"
-        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
       <img
         src="/assets/cave.jpg"
         alt="Background 5"
         data-bg="/assets/cave.jpg"
-        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
       <img
         src="/assets/waterfall.jpg"
         alt="Background 6"
         data-bg="/assets/waterfall.jpg"
-        class="w-16 h-16 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
     </div>
     <!-- Library scripts  -->

@@ -1,6 +1,8 @@
-@import "tailwindcss/preflight";
-@import "tailwindcss/utilities";
 @import "tailwindcss";
+
+@theme {
+  --breakpoint-3xl: 1800px;
+}
 
 html {
   font-size: 16px !important;
@@ -113,6 +115,13 @@ body {
   transition: opacity 0.2s;
   white-space: nowrap;
   font-family: "Orbitron";
+}
+
+@media (min-width: 1800px) {
+  .swiper-pagination-bullet::before {
+    font-size: 20px;
+    padding: 6px 14px;
+  }
 }
 
 .swiper-pagination-bullet:hover::before {
