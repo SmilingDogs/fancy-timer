@@ -128,17 +128,20 @@ function initGlobe() {
 
       const card = document.createElement("div");
       card.className =
-        "bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#ffffff] bg-[#293e70] border-2 border-white shadow-lg xl:min-w-[190px] min-w-[160px] xl:max-w-[190px] max-w-[160px]";
+        "bg-opacity-20 backdrop-blur-md rounded-md p-3 text-[#ffffff] bg-[#293e70] border-2 border-white shadow-lg min-w-[160px] 3xl:min-w-[200px] max-w-[160px] 3xl:max-w-[200px]";
       card.dataset.country = countryName;
       card.innerHTML = `
-        <h3 class="text-lg mb-2 font-bold text-[#ffcc00]">${countryName}</h3>
-        <p class="text-sm font-sans">${now.toLocaleDateString("en-US", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}</p>
-        <p class="text-sm live-clock font-sans">${now.toLocaleTimeString()}</p>
-        <p class="text-sm font-sans">${weekday}</p>
+        <h3 class="text-lg 3xl:text-2xl mb-2 font-bold text-[#ffcc00]">${countryName}</h3>
+        <p class="text-sm 3xl:text-lg font-sans">${now.toLocaleDateString(
+          "en-US",
+          {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }
+        )}</p>
+        <p class="text-sm 3xl:text-lg live-clock font-sans">${now.toLocaleTimeString()}</p>
+        <p class="text-sm 3xl:text-lg font-sans">${weekday}</p>
       `;
 
       recentTimes.appendChild(card);

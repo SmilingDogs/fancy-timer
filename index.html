@@ -219,12 +219,16 @@
             class="absolute inset-0 w-full h-full z-1"
           ></div>
           <div
-            class="absolute inset-0 bg-no-repeat bg-cover bg-center z-0 bg-[url(/assets/earth.jpg)]"
+            class="absolute inset-0 bg-no-repeat bg-cover bg-center z-0 bg-[url(/assets/earth.webp)]"
           ></div>
           <!-- Global Time slide content -->
-          <div class="flex flex-col items-center min-h-screen p-6">
+          <div
+            class="flex flex-col items-center justify-center min-h-screen p-6"
+          >
             <div class="relative flex items-start gap-4">
-              <h1 class="text-3xl font-bold text-white mb-3 z-2">
+              <h1
+                class="text-3xl 3xl:text-5xl font-bold text-white mb-3 3xl:mb-6 z-2"
+              >
                 World Times
               </h1>
               <button
@@ -250,15 +254,18 @@
               class="w-full xl:max-w-5xl max-w-4xl xl:h-[475px] h-[375px] rounded-lg overflow-hidden bg-transparent z-5"
             ></div> -->
             <!-- 3D Globus -->
-            <div id="globeDiv" class="w-2/3 xl:h-[475px] h-[360px] z-5"></div>
+            <div
+              id="globeDiv"
+              class="w-2/3 3xl:w-1/2 h-[475px] 3xl:h-[575px] z-5"
+            ></div>
 
             <!-- Live Times Section -->
             <div
               id="recentTimesSection"
-              class="mt-2 xl:mt-4 w-full xl:max-w-5xl max-w-4xl flex items-start xl:gap-4 gap-2 xl:px-4 px-2 z-5"
+              class="mt-2 3xl:mt-4 w-full min-w-4xl 3xl:min-w-5xl h-[125px] 3xl:h-[150px] flex items-start gap-2 3xl:gap-4 px-2 3xl:px-4 z-5"
             >
               <div
-                class="flex flex-col justify-between items-start min-w-[120px] h-[125px]"
+                class="flex flex-col 3xl:flex-col-reverse justify-between items-start h-[125px] 3xl:h-[140px] 3xl:text-2xl"
               >
                 <span
                   class="text-white text-l font-semibold hidden"
@@ -301,7 +308,7 @@
               </div>
               <div
                 id="recentTimes"
-                class="xl:w-[860px] w-[calc(100%-160px)] h-[125px] flex xl:gap-4 gap-3 flex-wrap overflow-y-auto xl:pr-4 pr-2"
+                class="w-[860px] 3xl:min-w-5xl h-[125px] 3xl:h-[155px] flex xl:gap-4 gap-3 flex-wrap overflow-y-auto xl:pr-4 pr-2"
               ></div>
             </div>
           </div>
@@ -316,33 +323,33 @@
       id="thumbnailsContainer"
     >
       <img
-        src="/assets/amalfi-night.jpg"
+        src="/assets/amalfi-night.webp"
         alt="Background 2"
-        data-bg="/assets/amalfi-night.jpg"
+        data-bg="/assets/amalfi-night.webp"
         class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
       <img
-        src="/assets/bridge.jpg"
+        src="/assets/bridge.webp"
         alt="Background 3"
-        data-bg="/assets/bridge.jpg"
+        data-bg="/assets/bridge.webp"
         class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
       <img
-        src="/assets/desert.jpg"
+        src="/assets/desert.webp"
         alt="Background 4"
-        data-bg="/assets/desert.jpg"
+        data-bg="/assets/desert.webp"
         class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
       <img
-        src="/assets/cave.jpg"
+        src="/assets/cave.webp"
         alt="Background 5"
-        data-bg="/assets/cave.jpg"
+        data-bg="/assets/cave.webp"
         class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
       <img
-        src="/assets/waterfall.jpg"
+        src="/assets/waterfall.webp"
         alt="Background 6"
-        data-bg="/assets/waterfall.jpg"
+        data-bg="/assets/waterfall.webp"
         class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
       />
     </div>
