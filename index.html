@@ -78,7 +78,7 @@
                 <!-- Rain Toggle button -->
                 <div class="flex justify-end pb-4">
                   <label
-                    class="relative inline-block w-30 3xl:w-36 h-10 3xl:h-14"
+                    class="relative inline-block w-30 3xl:w-36 h-10 3xl:h-14 hover:cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -111,7 +111,7 @@
                 <!-- Mode Toggle button -->
                 <div class="flex justify-end pb-4">
                   <label
-                    class="relative inline-block w-34 3xl:w-43 h-10 3xl:h-14"
+                    class="relative inline-block w-34 3xl:w-43 h-10 3xl:h-14 hover:cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -262,54 +262,56 @@
             <!-- Live Times Section -->
             <div
               id="recentTimesSection"
-              class="mt-2 3xl:mt-4 w-full min-w-4xl 3xl:min-w-5xl h-[125px] 3xl:h-[150px] flex items-start gap-2 3xl:gap-4 px-2 3xl:px-4 z-5"
+              class="mt-2 3xl:mt-4 w-full flex justify-center min-w-4xl h-[125px] 3xl:h-[150px] px-2 3xl:px-4 z-5"
             >
-              <div
-                class="flex flex-col 3xl:flex-col-reverse justify-between items-start h-[125px] 3xl:h-[140px] 3xl:text-2xl"
-              >
-                <span
-                  class="text-white text-l font-semibold hidden"
-                  id="recentTimesTitle"
-                  >Live Times:
-                </span>
-                <!-- Time Format toggle -->
-                <div class="justify-end pb-4 hidden" id="timeFormat">
-                  <label class="relative inline-block w-24 h-10">
-                    <!--prettier-ignore-->
-                    <input type="checkbox" id="timeFormatToggle" class="peer hidden" />
-                    <!-- Background -->
-                    <span
-                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-[#60a5fa] transition-colors duration-300"
-                    ></span>
-                    <!-- Toggle circle -->
-                    <span
-                      class="absolute top-1 left-2 w-8 h-8 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-13"
-                    ></span>
-                    <!-- 24H text -->
-                    <span
-                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs font-bold text-[#0f172a] opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+              <div class="flex items-start">
+                <div class="flex flex-col items-end">
+                  <span
+                    class="text-white text-xl 3xl:text-2xl font-semibold hidden"
+                    id="recentTimesTitle"
+                    >Live Times:
+                  </span>
+                  <!-- Time Format toggle -->
+                  <div class="pt-3 pb-3 hidden" id="timeFormat">
+                    <label
+                      class="relative inline-block w-24 3xl:w-30 h-10 3xl:h-12 hover:cursor-pointer"
                     >
-                      24H
-                    </span>
-                    <!-- AM/PM text -->
-                    <span
-                      class="absolute left-2 top-1/2 transform -translate-y-1/2 text-[10px] font-bold text-[#0f172a] opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
-                    >
-                      AM/PM
-                    </span>
-                  </label>
+                      <!--prettier-ignore-->
+                      <input type="checkbox" id="timeFormatToggle" class="peer hidden" />
+                      <!-- Background -->
+                      <span
+                        class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-[#60a5fa] transition-colors duration-300"
+                      ></span>
+                      <!-- Toggle circle -->
+                      <span
+                        class="absolute top-1 left-2 w-8 3xl:w-10 h-8 3xl:h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-13 3xl:peer-checked:translate-x-16"
+                      ></span>
+                      <!-- 24H text -->
+                      <span
+                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs 3xl:text-base font-bold text-[#0f172a] opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                      >
+                        24H
+                      </span>
+                      <!-- AM/PM text -->
+                      <span
+                        class="absolute left-2 top-1/2 transform -translate-y-1/2 text-[10px] 3xl:text-sm font-bold text-[#0f172a] opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
+                      >
+                        AM/PM
+                      </span>
+                    </label>
+                  </div>
+                  <button
+                    class="bg-[#60a5fa] text-[#0f172a] px-1 py-2 hidden rounded-md w-full text-l 3xl:text-lg hover:cursor-pointer"
+                    id="removeCardsBtn"
+                  >
+                    Remove
+                  </button>
                 </div>
-                <button
-                  class="bg-[#60a5fa] text-[#0f172a] px-2 py-1 hidden rounded-md w-2/3 text-xs"
-                  id="removeCardsBtn"
-                >
-                  Remove
-                </button>
+                <div
+                  id="recentTimes"
+                  class="w-[860px] 3xl:min-w-4xl h-[125px] 3xl:h-[155px] flex justify-end xl:gap-4 gap-3 flex-wrap overflow-y-auto xl:pr-4 pr-2"
+                ></div>
               </div>
-              <div
-                id="recentTimes"
-                class="w-[860px] 3xl:min-w-5xl h-[125px] 3xl:h-[155px] flex xl:gap-4 gap-3 flex-wrap overflow-y-auto xl:pr-4 pr-2"
-              ></div>
             </div>
           </div>
         </div>
