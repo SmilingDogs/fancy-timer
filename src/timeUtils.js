@@ -58,7 +58,7 @@ export async function fetchAndFormatTime(lat, lng, label, isCountry, isAmPm) {
           hour: "numeric",
           minute: "2-digit",
           hour12: isAmPm,
-        })}`;
+        })}\n${now.toLocaleDateString("en-US", { weekday: "long" })}`;
 
     setCachedTime(lat, lng, [formatted, now]);
     return [formatted, now];
