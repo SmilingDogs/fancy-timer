@@ -85,7 +85,6 @@ function initGlobe() {
           lat,
           lng,
           countryName,
-          true,
           isAmPmOn
         );
         polygon.set("tooltipText", `[bold]{name}[/]\n${formatted}`);
@@ -119,7 +118,6 @@ function initGlobe() {
         lat,
         lng,
         countryName,
-        true,
         isAmPmOn
       );
 
@@ -180,15 +178,17 @@ function initGlobe() {
       circle.events.on("pointerover", async () => {
         clearTimeout(hoverTimeout);
         hoverTimeout = setTimeout(async () => {
-          const { city, latitude, longitude } = dataItem.dataContext;
+          const { city, country, latitude, longitude } = dataItem.dataContext;
           const [formatted] = await fetchAndFormatTime(
             latitude,
             longitude,
             city,
-            false,
             isAmPmOn
           );
-          circle.set("tooltipText", formatted);
+          circle.set(
+            "tooltipText",
+            `[bold]${city}[/]\n(${country})[/]\n${formatted}`
+          );
           circle.showTooltip();
         }, 200);
       });
