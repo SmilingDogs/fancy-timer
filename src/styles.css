@@ -29,6 +29,31 @@ body {
   }
 }
 
+.timer-container {
+  position: relative;
+  /* width: 576px; */
+}
+
+.timer-container::after,
+.timer-container::before {
+  content: "";
+  position: absolute;
+  height: 104%;
+  width: 102%;
+  background: var(--gradient, conic-gradient(blue, red, blue));
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.timer-container::before {
+  filter: blur(1rem);
+  opacity: 0.5;
+}
+
 /* Buttons */
 .btn-primary {
   font-weight: bold;

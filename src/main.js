@@ -231,6 +231,36 @@ function setBackground() {
   }
 }
 
+function animateBorder() {
+  const card = document.querySelector(".timer-container");
+  let angle = 0;
+  let animationId = null;
+  // Add speed control - smaller number = slower rotation
+  const rotationSpeed = 0.25; // Change this value to adjust speed (default was 1)
+
+  function updateGradient() {
+    const gradientStyle = `conic-gradient(from ${angle}deg, blue, red, blue)`;
+    card.style.setProperty("--gradient", gradientStyle);
+    // Use rotationSpeed to increment angle more slowly
+    angle = (angle + rotationSpeed) % 360;
+    animationId = requestAnimationFrame(updateGradient);
+  }
+
+  return {
+    start: () => {
+      if (!animationId) {
+        updateGradient();
+      }
+    },
+    stop: () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    },
+  };
+}
+
 function startRain() {
   cleanupRainCanvases();
   setTimeout(() => rain(), 100);
@@ -290,6 +320,9 @@ lapBtn.addEventListener("click", lap);
 document.addEventListener("DOMContentLoaded", () => {
   // Set initial background color
   setBackground();
+  const borderAnimation = animateBorder();
+  borderAnimation.start();
+
   if (currentBackgroundUrl) {
     startRain();
   } // Start rain effect
