@@ -23,6 +23,8 @@ const recentTimesTitle = document.getElementById("recentTimesTitle");
 const timeFormatElement = document.getElementById("timeFormat");
 const timeFormatToggle = document.getElementById("timeFormatToggle");
 const infoToggle = document.getElementById("infoToggle");
+const timerElement = document.querySelector(".circular-timer");
+const timerCircle = timerElement.querySelector("svg > circle + circle");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
@@ -34,6 +36,8 @@ let currentBackgroundUrl = null; // store current background globally
 // let isWorldMapInitialized = false; // flag to check if world map is initialized
 export let isAmPmOn = false; // flag to check if AM/PM format is on
 let particleTimeout = null; // store timeout for particles
+let COUNTDOWN_SECONDS = null; // Change this value to set desired countdown time
+
 // Functions
 function initParticles() {
   if (window.particlesJS) {
@@ -119,8 +123,10 @@ function stopwatch() {
 function countdown() {
   if (hours === 0 && minutes === 0 && seconds === 0) {
     clearInterval(timer);
-    display.textContent = "Time is up!";
-    display.classList.add("text-[50px]", "3xl:text-[70px]", "font-semibold");
+    // display.textContent = "Time is up!";
+    // display.classList.add("text-[50px]", "3xl:text-[70px]", "font-semibold");
+    const no = document.getElementById("no");
+    no.classList.remove("hidden");
     const audio = new Audio(
       "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
     );
@@ -149,6 +155,7 @@ function start() {
   if (timer !== null) clearInterval(timer);
   if (isCountdown) {
     disableCountdownPanel();
+    runCircularTimer(timerElement);
     timer = setInterval(countdown, 1000);
   } else {
     timer = setInterval(stopwatch, 1000);
@@ -165,6 +172,8 @@ function reset() {
   playBeep();
   clearInterval(timer);
   [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
+  const no = document.getElementById("no");
+  no.classList.add("hidden");
   laps.innerHTML = "";
   display.classList.remove("text-[50px]", "3xl:text-[70px]", "font-semibold");
   display.textContent = "00:00:00";
@@ -261,6 +270,26 @@ function animateBorder() {
   };
 }
 
+// timerElement.classList.add("animatable");
+// timerCircle.style.strokeDashoffset = 1;
+
+function runCircularTimer(timerElement) {
+  let timeLeft = COUNTDOWN_SECONDS;
+  let countdownTimer = setInterval(function () {
+    if (timeLeft > -1) {
+      const timeRemaining = timeLeft--;
+      const normalizedTime =
+        (COUNTDOWN_SECONDS - timeRemaining) / COUNTDOWN_SECONDS;
+      // for clockwise animation
+      // const normalizedTime = (timeRemaining - COUNTDOWN_SECONDS) / COUNTDOWN_SECONDS;
+      timerCircle.style.strokeDashoffset = normalizedTime;
+    } else {
+      clearInterval(countdownTimer);
+      timerElement.classList.remove("animatable");
+    }
+  }, 1000);
+}
+
 function startRain() {
   cleanupRainCanvases();
   setTimeout(() => rain(), 100);
@@ -308,6 +337,16 @@ function removeCards() {
   removeBtn.classList.add("hidden");
   timeFormatElement.classList.remove("flex");
   timeFormatElement.classList.add("hidden"); // Hide time format element
+}
+
+function getCircularTimerColor(tailwindColor) {
+  const colorMap = {
+    "text-white": "white",
+    "text-yellow-500": "#EAB308",
+    "text-blue-500": "rgba(59, 130, 246, 1)",
+    "text-red-500": "#EF4444",
+  };
+  return colorMap[tailwindColor] || "rgba(59, 130, 246, 1)";
 }
 
 // Event Listeners
@@ -383,6 +422,8 @@ document.addEventListener("DOMContentLoaded", () => {
     laps.classList.remove(...colorClasses);
     laps.classList.add(activeColor);
 
+    timerCircle.style.stroke = getCircularTimerColor(activeColor);
+
     Array.from(timerControls.querySelectorAll("button")).forEach((b) => {
       b.classList.remove(...colorClasses);
       b.classList.add(activeColor);
@@ -415,30 +456,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mode toggle logic
   modeToggle.addEventListener("change", () => {
     isCountdown = modeToggle.checked;
+    toggleElementClasses(timerElement, isCountdown);
+    toggleElementClasses(countdownPanel, isCountdown);
+
     if (isCountdown) {
-      countdownPanel.classList.remove(
-        "opacity-0",
-        "pointer-events-none",
-        "translate-y-4"
-      );
-      countdownPanel.classList.add(
-        "opacity-100",
-        "pointer-events-auto",
-        "translate-y-0"
-      );
       lapBtn.classList.add("hidden");
     } else {
-      countdownPanel.classList.remove(
-        "opacity-100",
-        "opacity-50",
-        "pointer-events-auto",
-        "translate-y-0"
-      );
-      countdownPanel.classList.add(
-        "opacity-0",
-        "pointer-events-none",
-        "translate-y-4"
-      );
+      countdownPanel.classList.remove("opacity-50");
       lapBtn.classList.remove("hidden");
     }
   });
@@ -457,16 +481,19 @@ document.addEventListener("DOMContentLoaded", () => {
   hourSlider.addEventListener("input", () => {
     hours = parseInt(hourSlider.value);
     updateDisplay();
+    COUNTDOWN_SECONDS = seconds + minutes * 60 + hours * 3600;
   });
 
   minuteSlider.addEventListener("input", () => {
     minutes = parseInt(minuteSlider.value);
     updateDisplay();
+    COUNTDOWN_SECONDS = seconds + minutes * 60;
   });
 
   secondSlider.addEventListener("input", () => {
     seconds = parseInt(secondSlider.value);
     updateDisplay();
+    COUNTDOWN_SECONDS = seconds;
   });
   // Remove cards button
   removeBtn.addEventListener("click", () => {
@@ -483,3 +510,11 @@ document.addEventListener("DOMContentLoaded", () => {
     infoToggle.classList.toggle("info-active");
   });
 });
+
+function toggleElementClasses(element, isAdd) {
+  const showClasses = ["opacity-100", "pointer-events-auto", "translate-y-0"];
+  const hideClasses = ["opacity-0", "pointer-events-none", "translate-y-4"];
+
+  element.classList[isAdd ? "remove" : "add"](...hideClasses);
+  element.classList[isAdd ? "add" : "remove"](...showClasses);
+}

@@ -53,6 +53,51 @@ body {
   filter: blur(1rem);
   opacity: 0.5;
 }
+/* .circular-timer {
+  margin-top: 10px;
+} */
+
+.circular-timer > svg {
+  width: 200px;
+  height: 200px;
+}
+
+.circular-timer > svg > circle {
+  fill: none;
+  stroke-opacity: 0.2;
+  stroke: #3b82f6;
+  stroke-width: 10;
+  transform-origin: center center;
+  transform: rotate(-90deg);
+}
+
+.circular-timer > svg > circle + circle {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke-linecap: round;
+  stroke-opacity: 1;
+}
+
+.circular-timer.animatable > svg > circle + circle {
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.circular-timer > svg > text {
+  font-size: 2rem;
+}
+
+.circular-timer > svg > text + text {
+  font-size: 1rem;
+}
+
+/* Timer Display */
+.timer-display {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  text-align: center;
+  width: 450px; /* Fixed width */
+  letter-spacing: 4px; /* Consistent spacing between characters */
+}
 
 /* Buttons */
 .btn-primary {

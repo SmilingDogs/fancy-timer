@@ -31,18 +31,43 @@
           >
             <!-- Stopwatch/Timer container -->
             <div
-              class="bg-[#0f172a] p-8 pt-4 rounded-lg shadow-xl text-center timer-container"
+              class="bg-[#0f172a] p-8 pt-4 rounded-lg shadow-xl text-center timer-container min-w-3xl"
             >
-              <!-- Timer Display -->
-              <div
-                id="display"
-                class="text-7xl 3xl:text-8xl font-['Orbitron'] mb-6"
-              >
-                00:00:00
+              <div class="relative flex items-center gap-6">
+                <!-- Timer Display -->
+                <div
+                  id="display"
+                  class="text-7xl 3xl:text-8xl font-['Orbitron'] mb-6 timer-display"
+                >
+                  00:00:00
+                </div>
+                <!--Circular timer animation-->
+                <!--prettier-ignore-->
+                <div class="absolute top-20 -right-5 circular-timer animatable opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out ">
+                  <svg>
+                    <circle cx="50%" cy="50%" r="90" />
+                    <circle cx="50%" cy="50%" r="90" pathLength="1" data-circle />
+                    <text x="100" y="100" text-anchor="middle">
+                      <tspan
+                        id="no"
+                        class="font-['Orbitron'] text-3xl fill-white hidden"
+                      >
+                        No
+                      </tspan>
+                      <tspan
+                        id="timeLeft"
+                        class="font-['Orbitron'] text-xl fill-white"
+                      >
+                        time left
+                      </tspan>
+                    </text>
+                    <!-- <text x="100" y="120" text-anchor="middle">seconds</text> -->
+                  </svg>
+                </div>
               </div>
               <!-- Timer control buttons -->
               <div
-                class="timer-controls flex justify-center 3xl:text-2xl space-x-4 mb-6"
+                class="timer-controls flex justify-start 3xl:text-2xl space-x-4 mb-6"
               >
                 <button
                   id="startBtn"
@@ -74,7 +99,7 @@
                 <ul id="laps" class="text-600 space-y-2"></ul>
               </div>
 
-              <div class="flex justify-between items-center mt-4">
+              <div class="flex justify-start gap-6 items-center mt-4">
                 <!-- Rain Toggle button -->
                 <div class="flex justify-end pb-4">
                   <label
@@ -147,9 +172,7 @@
                     id="colorSelector"
                     class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                   >
-                    <option value="text-black" class="hover:bg-gray-500">
-                      Black
-                    </option>
+                    <option value="text-black">Black</option>
                     <option value="text-white">White</option>
                     <option value="text-yellow-500">Yellow</option>
                     <option value="text-blue-500">Blue</option>
