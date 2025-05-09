@@ -29,7 +29,7 @@ let timer = null;
 let lapsCount = 0;
 let isCountdown = false;
 let rainyDay = null; // store rainyDay instance globally
-let currentBackgroundUrl = "/assets/desert.webp"; // store current background globally
+let currentBackgroundUrl = null; // store current background globally
 // let worldMapRoot = null; //store world map root element globally
 // let isWorldMapInitialized = false; // flag to check if world map is initialized
 export let isAmPmOn = false; // flag to check if AM/PM format is on
@@ -211,14 +211,24 @@ function cleanupRainCanvases() {
     rainCanvas.remove(); // Remove the canvas element
   }
 
-  // Restore the background image
+  setBackground();
+}
+
+// Add new helper function to set background
+function setBackground() {
   const background = document.getElementById("background");
-  background.style.cssText = `
-    background-image: url('${currentBackgroundUrl}');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-`;
+  if (currentBackgroundUrl) {
+    background.style.cssText = `
+      background-image: url('${currentBackgroundUrl}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    `;
+  } else {
+    background.style.cssText = `
+      background-color: #0f172a;
+    `;
+  }
 }
 
 function startRain() {
@@ -278,7 +288,11 @@ lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
-  startRain(); // Start rain effect
+  // Set initial background color
+  setBackground();
+  if (currentBackgroundUrl) {
+    startRain();
+  } // Start rain effect
   // Swiper init
   const swiper = new Swiper(".swiper", {
     direction: "vertical",
@@ -354,7 +368,9 @@ document.addEventListener("DOMContentLoaded", () => {
       testImage.onload = () => {
         background.className = "fixed inset-0 bg-no-repeat bg-cover";
         if (!rainToggle.checked) {
-          startRain();
+          if (currentBackgroundUrl) {
+            startRain();
+          }
         } else {
           cleanupRainCanvases();
         }
@@ -398,7 +414,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (rainToggle.checked) {
       cleanupRainCanvases();
     } else {
-      startRain();
+      if (currentBackgroundUrl) {
+        startRain();
+      }
     }
   });
 
