@@ -24,7 +24,7 @@ const timeFormatElement = document.getElementById("timeFormat");
 const timeFormatToggle = document.getElementById("timeFormatToggle");
 const infoToggle = document.getElementById("infoToggle");
 const timerElement = document.querySelector(".circular-timer");
-const timerCircle = timerElement.querySelector("svg > circle + circle");
+const timerCircle = timerElement.querySelector("[data-circle]");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
@@ -155,6 +155,7 @@ function start() {
   if (timer !== null) clearInterval(timer);
   if (isCountdown) {
     disableCountdownPanel();
+    toggleElementClasses(countdownPanel, false);
     runCircularTimer(timerElement);
     timer = setInterval(countdown, 1000);
   } else {
@@ -223,7 +224,6 @@ function cleanupRainCanvases() {
   setBackground();
 }
 
-// Add new helper function to set background
 function setBackground() {
   const background = document.getElementById("background");
   if (currentBackgroundUrl) {
@@ -270,33 +270,58 @@ function animateBorder() {
   };
 }
 
-// timerElement.classList.add("animatable");
-// timerCircle.style.strokeDashoffset = 1;
-
 function runCircularTimer(timerElement) {
   let timeLeft = COUNTDOWN_SECONDS;
-  let countdownTimer = setInterval(function () {
-    if (timeLeft > -1) {
-      const timeRemaining = timeLeft--;
-      const normalizedTime =
-        (COUNTDOWN_SECONDS - timeRemaining) / COUNTDOWN_SECONDS;
-      // for clockwise animation
-      // const normalizedTime = (timeRemaining - COUNTDOWN_SECONDS) / COUNTDOWN_SECONDS;
-      timerCircle.style.strokeDashoffset = normalizedTime;
-    } else {
+
+  // Initialize timer state
+  initCircularTimer();
+
+  // Update immediately for the first second
+  const initialProgress = 1 / COUNTDOWN_SECONDS;
+  timerCircle.style.strokeDashoffset = initialProgress;
+
+  let countdownTimer = setInterval(() => {
+    timeLeft--;
+    // Calculate progress based on remaining time
+    const progress = (COUNTDOWN_SECONDS - timeLeft) / COUNTDOWN_SECONDS;
+    timerCircle.style.strokeDashoffset = progress;
+
+    if (timeLeft <= 0) {
       clearInterval(countdownTimer);
       timerElement.classList.remove("animatable");
     }
   }, 1000);
 }
 
+function getCircularTimerColor(tailwindColor) {
+  const colorMap = {
+    "text-white": "white",
+    "text-yellow-500": "#EAB308",
+    "text-blue-500": "rgba(59, 130, 246, 1)",
+    "text-red-500": "#EF4444",
+  };
+  return colorMap[tailwindColor] || "rgba(59, 130, 246, 1)";
+}
+
+function initCircularTimer() {
+  timerCircle.style.strokeDashoffset = 0;
+  timerElement.classList.add("animatable");
+}
+
+function toggleElementClasses(element, isAdd) {
+  const showClasses = ["opacity-100", "pointer-events-auto", "translate-y-0"];
+  const hideClasses = ["opacity-0", "pointer-events-none", "translate-y-4"];
+
+  element.classList[isAdd ? "remove" : "add"](...hideClasses);
+  element.classList[isAdd ? "add" : "remove"](...showClasses);
+}
 function startRain() {
   cleanupRainCanvases();
   setTimeout(() => rain(), 100);
 }
 
 function disableCountdownPanel() {
-  countdownPanel.classList.add("opacity-50", "pointer-events-none");
+  countdownPanel.classList.add("pointer-events-none");
   hourSlider.disabled = true;
   minuteSlider.disabled = true;
   secondSlider.disabled = true;
@@ -337,16 +362,6 @@ function removeCards() {
   removeBtn.classList.add("hidden");
   timeFormatElement.classList.remove("flex");
   timeFormatElement.classList.add("hidden"); // Hide time format element
-}
-
-function getCircularTimerColor(tailwindColor) {
-  const colorMap = {
-    "text-white": "white",
-    "text-yellow-500": "#EAB308",
-    "text-blue-500": "rgba(59, 130, 246, 1)",
-    "text-red-500": "#EF4444",
-  };
-  return colorMap[tailwindColor] || "rgba(59, 130, 246, 1)";
 }
 
 // Event Listeners
@@ -482,18 +497,21 @@ document.addEventListener("DOMContentLoaded", () => {
     hours = parseInt(hourSlider.value);
     updateDisplay();
     COUNTDOWN_SECONDS = seconds + minutes * 60 + hours * 3600;
+    initCircularTimer();
   });
 
   minuteSlider.addEventListener("input", () => {
     minutes = parseInt(minuteSlider.value);
     updateDisplay();
     COUNTDOWN_SECONDS = seconds + minutes * 60;
+    initCircularTimer();
   });
 
   secondSlider.addEventListener("input", () => {
     seconds = parseInt(secondSlider.value);
     updateDisplay();
     COUNTDOWN_SECONDS = seconds;
+    initCircularTimer();
   });
   // Remove cards button
   removeBtn.addEventListener("click", () => {
@@ -510,11 +528,3 @@ document.addEventListener("DOMContentLoaded", () => {
     infoToggle.classList.toggle("info-active");
   });
 });
-
-function toggleElementClasses(element, isAdd) {
-  const showClasses = ["opacity-100", "pointer-events-auto", "translate-y-0"];
-  const hideClasses = ["opacity-0", "pointer-events-none", "translate-y-4"];
-
-  element.classList[isAdd ? "remove" : "add"](...hideClasses);
-  element.classList[isAdd ? "add" : "remove"](...showClasses);
-}

@@ -31,7 +31,7 @@
           >
             <!-- Stopwatch/Timer container -->
             <div
-              class="bg-[#0f172a] p-8 pt-4 rounded-lg shadow-xl text-center timer-container min-w-3xl"
+              class="bg-[#0f172a] px-8 py-4 rounded-lg shadow-xl text-center timer-container min-w-3xl"
             >
               <div class="relative flex items-center gap-6">
                 <!-- Timer Display -->
@@ -43,7 +43,7 @@
                 </div>
                 <!--Circular timer animation-->
                 <!--prettier-ignore-->
-                <div class="absolute top-20 -right-5 circular-timer animatable opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out ">
+                <div class="circular-timer animatable absolute top-20 -right-5  opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out ">
                   <svg>
                     <circle cx="50%" cy="50%" r="90" />
                     <circle cx="50%" cy="50%" r="90" pathLength="1" data-circle />
@@ -61,7 +61,6 @@
                         time left
                       </tspan>
                     </text>
-                    <!-- <text x="100" y="120" text-anchor="middle">seconds</text> -->
                   </svg>
                 </div>
               </div>
@@ -113,15 +112,15 @@
 
                     <!-- Background -->
                     <span
-                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
+                      class="block w-full h-full bg-[#0f172a] border-1 border-white rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
                     ></span>
                     <!-- Toggle circle -->
                     <span
-                      class="absolute top-1 3xl:top-2 left-2 w-8 3xl:w-10 h-8 3xl:h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-18 3xl:peer-checked:translate-x-22"
+                      class="absolute top-1 left-2 3xl:top-2 w-8 3xl:w-10 h-8 3xl:h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-18 3xl:peer-checked:translate-x-22"
                     ></span>
                     <!-- RAIN text -->
                     <span
-                      class="3xl:text-base absolute right-4 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                      class="3xl:text-base absolute right-4 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-white opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
                     >
                       Rain!
                     </span>
@@ -146,7 +145,7 @@
 
                     <!-- Background -->
                     <span
-                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
+                      class="block w-full h-full bg-[#0f172a] border-1 border-white rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
                     ></span>
                     <!-- Toggle circle -->
                     <span
@@ -154,7 +153,7 @@
                     ></span>
                     <!-- Timer text -->
                     <span
-                      class="3xl:text-base absolute right-4 3xl:right-10 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                      class="3xl:text-base absolute right-4 3xl:right-10 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-white opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
                     >
                       Timer
                     </span>
