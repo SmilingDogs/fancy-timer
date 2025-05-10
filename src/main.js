@@ -28,15 +28,15 @@ const timerCircle = timerElement.querySelector("[data-circle]");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
 let timer = null;
+let countdownTimer = null;
 let lapsCount = 0;
 let isCountdown = false;
 let rainyDay = null; // store rainyDay instance globally
 let currentBackgroundUrl = null; // store current background globally
-// let worldMapRoot = null; //store world map root element globally
-// let isWorldMapInitialized = false; // flag to check if world map is initialized
 export let isAmPmOn = false; // flag to check if AM/PM format is on
 let particleTimeout = null; // store timeout for particles
 let COUNTDOWN_SECONDS = null; // Change this value to set desired countdown time
+let storedProgress = null; // Add this with other variables at the top
 
 // Functions
 function initParticles() {
@@ -99,7 +99,6 @@ function initParticles() {
     }, 180000); // Stop after 3 min
   }
 }
-
 function updateDisplay() {
   const h = hours.toString().padStart(2, "0");
   const m = minutes.toString().padStart(2, "0");
@@ -153,10 +152,12 @@ function start() {
   playBeep();
   startBtn.classList.add("hidden");
   if (timer !== null) clearInterval(timer);
+  if (countdownTimer !== null) clearInterval(countdownTimer);
   if (isCountdown) {
     disableCountdownPanel();
     toggleElementClasses(countdownPanel, false);
-    runCircularTimer(timerElement);
+    // Pass stored progress when resuming
+    runCircularTimer(timerElement, storedProgress);
     timer = setInterval(countdown, 1000);
   } else {
     timer = setInterval(stopwatch, 1000);
@@ -166,12 +167,21 @@ function start() {
 function stopTime() {
   playBeep();
   clearInterval(timer);
+  clearInterval(countdownTimer);
+  // Store current progress when stopping
+  if (isCountdown) {
+    storedProgress = timerCircle.style.strokeDashoffset;
+  }
   startBtn.classList.remove("hidden");
 }
 
 function reset() {
   playBeep();
   clearInterval(timer);
+  clearInterval(countdownTimer);
+  storedProgress = null; // Reset stored progress
+  COUNTDOWN_SECONDS = null;
+  timerCircle.style.strokeDashoffset = 1;
   [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
   const no = document.getElementById("no");
   no.classList.add("hidden");
@@ -181,7 +191,10 @@ function reset() {
   startBtn.classList.remove("hidden");
   stopBtn.classList.remove("hidden");
   updateDisplay();
-  if (isCountdown) enableCountdownPanel();
+  if (isCountdown) {
+    enableCountdownPanel();
+    toggleElementClasses(countdownPanel, true);
+  }
 }
 
 function lap() {
@@ -270,19 +283,24 @@ function animateBorder() {
   };
 }
 
-function runCircularTimer(timerElement) {
+function runCircularTimer(timerElement, resumeProgress = null) {
   let timeLeft = COUNTDOWN_SECONDS;
-
   // Initialize timer state
   initCircularTimer();
 
-  // Update immediately for the first second
-  const initialProgress = 1 / COUNTDOWN_SECONDS;
-  timerCircle.style.strokeDashoffset = initialProgress;
+  if (resumeProgress !== null) {
+    // Resume from stored progress
+    timerCircle.style.strokeDashoffset = resumeProgress;
+    // Adjust timeLeft based on progress
+    timeLeft = Math.round(COUNTDOWN_SECONDS * (1 - resumeProgress));
+  } else {
+    // Start fresh
+    const initialProgress = 1 / COUNTDOWN_SECONDS;
+    timerCircle.style.strokeDashoffset = initialProgress;
+  }
 
-  let countdownTimer = setInterval(() => {
+  countdownTimer = setInterval(() => {
     timeLeft--;
-    // Calculate progress based on remaining time
     const progress = (COUNTDOWN_SECONDS - timeLeft) / COUNTDOWN_SECONDS;
     timerCircle.style.strokeDashoffset = progress;
 
@@ -328,7 +346,7 @@ function disableCountdownPanel() {
 }
 
 function enableCountdownPanel() {
-  countdownPanel.classList.remove("opacity-50", "pointer-events-none");
+  countdownPanel.classList.remove("pointer-events-none");
   hourSlider.disabled = false;
   minuteSlider.disabled = false;
   secondSlider.disabled = false;
