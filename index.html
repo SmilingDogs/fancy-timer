@@ -31,38 +31,14 @@
           >
             <!-- Stopwatch/Timer container -->
             <div
-              class="bg-[#0f172a] px-8 py-4 rounded-lg shadow-xl text-center timer-container min-w-3xl"
+              class="left-side bg-[#0f172a] px-8 py-4 rounded-lg shadow-xl text-center timer-container"
             >
-              <div class="relative flex items-center gap-6">
-                <!-- Timer Display -->
-                <div
-                  id="display"
-                  class="text-7xl 3xl:text-8xl font-['Orbitron'] mb-6 timer-display"
-                >
-                  00:00:00
-                </div>
-                <!--Circular timer animation-->
-                <!--prettier-ignore-->
-                <div class="circular-timer animatable absolute top-20 -right-5  opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out ">
-                  <svg>
-                    <circle cx="50%" cy="50%" r="90" />
-                    <circle cx="50%" cy="50%" r="90" pathLength="1" data-circle />
-                    <text x="100" y="100" text-anchor="middle">
-                      <tspan
-                        id="no"
-                        class="font-['Orbitron'] text-3xl fill-white hidden"
-                      >
-                        No
-                      </tspan>
-                      <tspan
-                        id="timeLeft"
-                        class="font-['Orbitron'] text-xl fill-white"
-                      >
-                        time left
-                      </tspan>
-                    </text>
-                  </svg>
-                </div>
+              <!-- Timer Display -->
+              <div
+                id="display"
+                class="text-6xl 3xl:text-7xl font-['Orbitron'] mb-6 timer-display"
+              >
+                00:00:00
               </div>
               <!-- Timer control buttons -->
               <div
@@ -165,11 +141,14 @@
                     </span>
                   </label>
                 </div>
+              </div>
+              <div class="flex justify-start items-center gap-6 mt-4">
+                <span class="text-white 3xl:text-xl">Theme</span>
                 <!-- Timer colors selector -->
-                <div class="flex justify-end pb-4 3xl:text-xl">
+                <div class="flex justify-end 3xl:text-xl">
                   <select
                     id="colorSelector"
-                    class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    class="px-4 py-3 rounded-lg shadow-md text-white bg-[#0f172a] border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                   >
                     <option value="text-black">Black</option>
                     <option value="text-white">White</option>
@@ -179,55 +158,120 @@
                   </select>
                 </div>
               </div>
+              <!-- Thumbnail gallery  -->
+              <div class="flex space-x-2 z-500 mt-8" id="thumbnailsContainer">
+                <img
+                  src="/assets/amalfi-night.webp"
+                  alt="Background 2"
+                  data-bg="/assets/amalfi-night.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                />
+                <img
+                  src="/assets/bridge.webp"
+                  alt="Background 3"
+                  data-bg="/assets/bridge.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                />
+                <img
+                  src="/assets/desert.webp"
+                  alt="Background 4"
+                  data-bg="/assets/desert.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                />
+                <img
+                  src="/assets/cave.webp"
+                  alt="Background 5"
+                  data-bg="/assets/cave.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                />
+                <img
+                  src="/assets/waterfall.webp"
+                  alt="Background 6"
+                  data-bg="/assets/waterfall.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                />
+              </div>
 
               <audio
                 id="beep"
                 src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
               ></audio>
             </div>
-            <!-- Countdown Settings Panel -->
             <div
-              id="countdownPanel"
-              class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-6 3xl:space-y-10"
+              class="right-side flex flex-col items-center justify-center bg-[#0f172a] ml-6 px-8 py-4 rounded-lg text-center"
             >
-              <div class="flex flex-col items-center gap-2 3xl:gap-4">
-                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
-                  Hours
+              <!--Circular timer animation-->
+              <!--prettier-ignore-->
+              <div class="circular-timer animatable opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out ">
+              <svg>
+                <circle cx="50%" cy="50%" r="90" />
+                <circle cx="50%" cy="50%" r="90" pathLength="1" data-circle />
+                <text x="100" y="100" text-anchor="middle">
+                  <tspan
+                    id="no"
+                    class="font-['Orbitron'] text-3xl fill-white hidden"
+                    >
+                       No
+                  </tspan>
+                  <tspan
+                    id="timeLeft"
+                    class="font-['Orbitron'] text-xl fill-white"
+                    >
+                      time left
+                  </tspan>
+                </text>
+              </svg>
+            </div>
+              <!-- Countdown Settings Panel -->
+              <div
+                id="countdownPanel"
+                class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-6 3xl:space-y-10"
+              >
+                <div class="flex flex-col items-center gap-2 3xl:gap-4">
+                  <div
+                    class="text-sm text-white font-['Orbitron'] 3xl:text-2xl"
+                  >
+                    Hours
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="24"
+                    value="0"
+                    class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
+                    id="hourSlider"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="24"
-                  value="0"
-                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
-                  id="hourSlider"
-                />
-              </div>
-              <div class="flex flex-col items-center gap-2 3xl:gap-4">
-                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
-                  Minutes
+                <div class="flex flex-col items-center gap-2 3xl:gap-4">
+                  <div
+                    class="text-sm text-white font-['Orbitron'] 3xl:text-2xl"
+                  >
+                    Minutes
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="59"
+                    value="0"
+                    class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
+                    id="minuteSlider"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="59"
-                  value="0"
-                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
-                  id="minuteSlider"
-                />
-              </div>
-              <div class="flex flex-col items-center gap-2 3xl:gap-4">
-                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
-                  Seconds
+                <div class="flex flex-col items-center gap-2 3xl:gap-4">
+                  <div
+                    class="text-sm text-white font-['Orbitron'] 3xl:text-2xl"
+                  >
+                    Seconds
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="59"
+                    value="1"
+                    class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
+                    id="secondSlider"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="59"
-                  value="1"
-                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
-                  id="secondSlider"
-                />
               </div>
             </div>
           </div>
@@ -340,42 +384,6 @@
       </div>
       <!-- Pagination -->
       <div class="swiper-pagination flex flex-col gap-4 pr-2"></div>
-    </div>
-    <!-- Thumbnail gallery  -->
-    <div
-      class="fixed bottom-4 left-4 flex space-x-2 z-500"
-      id="thumbnailsContainer"
-    >
-      <img
-        src="/assets/amalfi-night.webp"
-        alt="Background 2"
-        data-bg="/assets/amalfi-night.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
-      <img
-        src="/assets/bridge.webp"
-        alt="Background 3"
-        data-bg="/assets/bridge.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
-      <img
-        src="/assets/desert.webp"
-        alt="Background 4"
-        data-bg="/assets/desert.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
-      <img
-        src="/assets/cave.webp"
-        alt="Background 5"
-        data-bg="/assets/cave.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
-      <img
-        src="/assets/waterfall.webp"
-        alt="Background 6"
-        data-bg="/assets/waterfall.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
     </div>
     <!-- Library scripts  -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

@@ -38,7 +38,7 @@ body {
 .timer-container::before {
   content: "";
   position: absolute;
-  height: 104%;
+  height: 102%;
   width: 102%;
   background: var(--gradient, conic-gradient(blue, red, blue));
   top: 50%;
@@ -50,7 +50,7 @@ body {
 }
 
 .timer-container::before {
-  filter: blur(1rem);
+  /* filter: blur(0.5rem); */
   opacity: 0.5;
 }
 /* .circular-timer {
