@@ -397,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (currentBackgroundUrl) {
     startRain();
-  } // Start rain effect
+  }
   // Swiper init
   const swiper = new Swiper(".swiper", {
     direction: "vertical",
@@ -421,23 +421,16 @@ document.addEventListener("DOMContentLoaded", () => {
     on: {
       slideChange: function () {
         if (this.activeIndex === 0) {
-          setTimeout(() => {
-            thumbnailsContainer.style.display = "flex";
-          }, 800);
-          // document.getElementById("worldMap").style.display = "none";
           document.getElementById("globeDiv").style.display = "none";
         } else {
-          thumbnailsContainer.style.display = "none";
-
           if (!isGlobeInitialized) {
             // initWorldMap();
             initGlobe(); // Initialize the globe
           }
-          // document.getElementById("worldMap").style.display = "block";
           document.getElementById("globeDiv").style.display = "block";
         }
 
-        // ✅ Always clean and restart particles AFTER
+        // ✅ Always clean and restart particles
         destroyParticles();
         initParticles();
       },
