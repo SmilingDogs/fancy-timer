@@ -1,24 +1,31 @@
 // Grab elements
 // import initWorldMap from "./initWorldMap";
 import initGlobe, { isGlobeInitialized } from "./initGlobe"; // Add import
-const display = document.getElementById("display");
-const colorSelector = document.getElementById("colorSelector");
-const laps = document.getElementById("laps");
-const beep = document.getElementById("beep");
-
+const timer = document.querySelector(".timer");
+const wrapper = document.querySelector(".timer-wrapper");
 const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 const resetBtn = document.getElementById("resetBtn");
+const countdownPanel = document.getElementById("countdownPanel");
+const toggleModeBtn = document.getElementById("toggleModeBtn");
+const setSecondsInput = document.getElementById("setSeconds");
+const setMinutesInput = document.getElementById("setMinutes");
+const setHoursInput = document.getElementById("setHours");
+const setCountdownBtn = document.getElementById("setCountdownBtn");
+const elements = {
+  secL: document.getElementById("sec-left"),
+  secR: document.getElementById("sec-right"),
+  minL: document.getElementById("min-left"),
+  minR: document.getElementById("min-right"),
+  hrL: document.getElementById("hour-left"),
+  hrR: document.getElementById("hour-right"),
+};
+const laps = document.getElementById("laps");
+const beep = document.getElementById("beep");
 const lapBtn = document.getElementById("lapBtn");
 const removeBtn = document.getElementById("removeCardsBtn");
 const thumbnailsContainer = document.getElementById("thumbnailsContainer");
-const timerControls = document.querySelector(".timer-controls");
-const modeToggle = document.getElementById("modeToggle");
 const rainToggle = document.getElementById("rainToggle");
-const countdownPanel = document.getElementById("countdownPanel");
-const hourSlider = document.getElementById("hourSlider");
-const minuteSlider = document.getElementById("minuteSlider");
-const secondSlider = document.getElementById("secondSlider");
 const recentTimesTitle = document.getElementById("recentTimesTitle");
 const timeFormatElement = document.getElementById("timeFormat");
 const timeFormatToggle = document.getElementById("timeFormatToggle");
@@ -27,16 +34,23 @@ const timerElement = document.querySelector(".circular-timer");
 const timerCircle = timerElement.querySelector("[data-circle]");
 // Variables
 let [seconds, minutes, hours] = [0, 0, 0];
-let timer = null;
-let countdownTimer = null;
-let lapsCount = 0;
+let timerInterval = null;
 let isCountdown = false;
+let lapsCount = 0;
 let rainyDay = null; // store rainyDay instance globally
 let currentBackgroundUrl = null; // store current background globally
 export let isAmPmOn = false; // flag to check if AM/PM format is on
 let particleTimeout = null; // store timeout for particles
 let COUNTDOWN_SECONDS = null; // Change this value to set desired countdown time
 let storedProgress = null; // Add this with other variables at the top
+let prevDigits = {
+  secL: "0",
+  secR: "0",
+  minL: "0",
+  minR: "0",
+  hrL: "0",
+  hrR: "0",
+};
 
 // Functions
 function initParticles() {
@@ -99,39 +113,71 @@ function initParticles() {
     }, 180000); // Stop after 3 min
   }
 }
-function updateDisplay() {
-  const h = hours.toString().padStart(2, "0");
-  const m = minutes.toString().padStart(2, "0");
-  const s = seconds.toString().padStart(2, "0");
-  display.textContent = `${h}:${m}:${s}`;
+
+function formatTime(value) {
+  return value.toString().padStart(2, "0").split("");
 }
 
-function stopwatch() {
+function animateDigit(el, newVal, key) {
+  if (prevDigits[key] === newVal) return;
+
+  const oldSpan = el.cloneNode(true);
+  oldSpan.classList.add("old-digit");
+  el.textContent = "";
+
+  const newSpan = document.createElement("span");
+  newSpan.textContent = newVal;
+  newSpan.classList.add("new-digit");
+
+  el.appendChild(oldSpan);
+  el.appendChild(newSpan);
+
+  setTimeout(() => {
+    el.textContent = newVal;
+  }, 400);
+
+  prevDigits[key] = newVal;
+}
+
+function drawCurrentDisplay() {
+  let formattedSeconds = seconds % 60;
+  let formattedMinutes = minutes % 60;
+  let formattedHours = hours % 60;
+
+  const [sL, sR] = formatTime(formattedSeconds);
+  const [mL, mR] = formatTime(formattedMinutes);
+  const [hL, hR] = formatTime(formattedHours);
+
+  elements.secL.textContent = sL;
+  elements.secR.textContent = sR;
+  elements.minL.textContent = mL;
+  elements.minR.textContent = mR;
+  elements.hrL.textContent = hL;
+  elements.hrR.textContent = hR;
+}
+
+function runTimer() {
+  if (hours === 99) {
+    stopTimer();
+    rockAndRoll();
+    return;
+  }
   seconds++;
   if (seconds === 60) {
     seconds = 0;
     minutes++;
-    if (minutes === 60) {
-      minutes = 0;
-      hours++;
-    }
   }
-  updateDisplay();
+  if (minutes === 60) {
+    minutes = 0;
+    hours++;
+  }
+  updateDigits();
 }
 
-function countdown() {
-  if (hours === 0 && minutes === 0 && seconds === 0) {
-    clearInterval(timer);
-    // display.textContent = "Time is up!";
-    // display.classList.add("text-[50px]", "3xl:text-[70px]", "font-semibold");
-    const no = document.getElementById("no");
-    no.classList.remove("hidden");
-    const audio = new Audio(
-      "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-    );
-    audio.play();
-    startBtn.classList.add("hidden");
-    stopBtn.classList.add("hidden");
+function runCountdown() {
+  if (seconds === 0 && minutes === 0 && hours === 0) {
+    stopTimer();
+    rockAndRoll();
     return;
   }
 
@@ -145,61 +191,99 @@ function countdown() {
     minutes = 59;
     seconds = 59;
   }
-  updateDisplay();
+  updateDigits();
 }
 
-function start() {
-  playBeep();
-  startBtn.classList.add("hidden");
-  if (timer !== null) clearInterval(timer);
-  if (countdownTimer !== null) clearInterval(countdownTimer);
-  if (isCountdown) {
-    disableCountdownPanel();
-    toggleElementClasses(countdownPanel, false);
-    // Pass stored progress when resuming
-    runCircularTimer(timerElement, storedProgress);
-    timer = setInterval(countdown, 1000);
-  } else {
-    timer = setInterval(stopwatch, 1000);
-  }
+function updateDigits() {
+  const [sL, sR] = formatTime(seconds % 60);
+  const [mL, mR] = formatTime(minutes % 60);
+  const [hL, hR] = formatTime(hours % 60);
+
+  animateDigit(elements.secR, sR, "secR");
+  animateDigit(elements.secL, sL, "secL");
+  animateDigit(elements.minR, mR, "minR");
+  animateDigit(elements.minL, mL, "minL");
+  animateDigit(elements.hrR, hR, "hrR");
+  animateDigit(elements.hrL, hL, "hrL");
 }
 
-function stopTime() {
-  playBeep();
-  clearInterval(timer);
-  clearInterval(countdownTimer);
-  // Store current progress when stopping
-  if (isCountdown) {
-    storedProgress = timerCircle.style.strokeDashoffset;
-  }
-  startBtn.classList.remove("hidden");
+function startTimer() {
+  if (timerInterval) return;
+  timerInterval = setInterval(() => {
+    isCountdown ? runCountdown() : runTimer();
+  }, 1000);
 }
 
-function reset() {
-  playBeep();
-  clearInterval(timer);
-  clearInterval(countdownTimer);
-  storedProgress = null; // Reset stored progress
-  COUNTDOWN_SECONDS = null;
-  timerCircle.style.strokeDashoffset = 1;
-  [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
-  const no = document.getElementById("no");
-  no.classList.add("hidden");
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function clearInputFields() {
+  setSecondsInput.value = "";
+  setMinutesInput.value = "";
+  setHoursInput.value = "";
+}
+
+function resetTimer() {
+  stopTimer();
+  [seconds, minutes, hours] = [0, 0, 0];
+  prevDigits = {
+    secL: "0",
+    secR: "0",
+    minL: "0",
+    minR: "0",
+    hrL: "0",
+    hrR: "0",
+  };
   laps.innerHTML = "";
-  display.classList.remove("text-[50px]", "3xl:text-[70px]", "font-semibold");
-  display.textContent = "00:00:00";
-  startBtn.classList.remove("hidden");
-  stopBtn.classList.remove("hidden");
-  updateDisplay();
-  if (isCountdown) {
-    enableCountdownPanel();
-    toggleElementClasses(countdownPanel, true);
-  }
+  lapsCount = 0;
+  clearInputFields();
+  drawCurrentDisplay();
+}
+
+function toggleCountdown() {
+  isCountdown = !isCountdown;
+  toggleModeBtn.textContent = isCountdown ? "Timer mode" : "Countdown mode";
+  countdownPanel.classList.toggle("show", isCountdown);
+  resetTimer();
+}
+
+function rockAndRoll() {
+  // Restart both animations
+  timer.classList.remove("flash-end");
+  wrapper.classList.remove("shake");
+  void timer.offsetWidth;
+  timer.classList.add("flash-end");
+  wrapper.classList.add("shake");
+}
+
+function applyCountdownSettings() {
+  const h = parseInt(setHoursInput.value) || 0;
+  const m = parseInt(setMinutesInput.value) || 0;
+  const s = parseInt(setSecondsInput.value) || 0;
+
+  hours = Math.min(h, 99);
+  minutes = Math.min(m, 59);
+  seconds = Math.min(s, 59);
+
+  const [secL, secR] = formatTime(seconds);
+  const [minL, minR] = formatTime(minutes);
+  const [hrL, hrR] = formatTime(hours);
+
+  prevDigits.secL = secL;
+  prevDigits.secR = secR;
+  prevDigits.minL = minL;
+  prevDigits.minR = minR;
+  prevDigits.hrL = hrL;
+  prevDigits.hrR = hrR;
+
+  drawCurrentDisplay();
 }
 
 function lap() {
   if (seconds !== 0 || minutes !== 0 || hours !== 0) {
-    const lapTime = display.textContent;
+    const lapTime = timer.textContent;
     const li = document.createElement("li");
     li.textContent = `Lap ${++lapsCount}: ${lapTime}`;
     li.className = "opacity-0 translate-y-2 transition-all duration-500";
@@ -253,36 +337,6 @@ function setBackground() {
   }
 }
 
-function animateBorder() {
-  const card = document.querySelector(".timer-container");
-  let angle = 0;
-  let animationId = null;
-  // Add speed control - smaller number = slower rotation
-  const rotationSpeed = 0.25; // Change this value to adjust speed (default was 1)
-
-  function updateGradient() {
-    const gradientStyle = `conic-gradient(from ${angle}deg, blue, red, blue)`;
-    card.style.setProperty("--gradient", gradientStyle);
-    // Use rotationSpeed to increment angle more slowly
-    angle = (angle + rotationSpeed) % 360;
-    animationId = requestAnimationFrame(updateGradient);
-  }
-
-  return {
-    start: () => {
-      if (!animationId) {
-        updateGradient();
-      }
-    },
-    stop: () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
-    },
-  };
-}
-
 function runCircularTimer(timerElement, resumeProgress = null) {
   let timeLeft = COUNTDOWN_SECONDS;
   // Initialize timer state
@@ -333,26 +387,10 @@ function toggleElementClasses(element, isAdd) {
   element.classList[isAdd ? "remove" : "add"](...hideClasses);
   element.classList[isAdd ? "add" : "remove"](...showClasses);
 }
+
 function startRain() {
   cleanupRainCanvases();
   setTimeout(() => rain(), 100);
-}
-
-function disableCountdownPanel() {
-  countdownPanel.classList.add("pointer-events-none");
-  hourSlider.disabled = true;
-  minuteSlider.disabled = true;
-  secondSlider.disabled = true;
-}
-
-function enableCountdownPanel() {
-  countdownPanel.classList.remove("pointer-events-none");
-  hourSlider.disabled = false;
-  minuteSlider.disabled = false;
-  secondSlider.disabled = false;
-  hourSlider.value = 1;
-  minuteSlider.value = 1;
-  secondSlider.value = 1;
 }
 
 function destroyParticles() {
@@ -383,17 +421,19 @@ function removeCards() {
 }
 
 // Event Listeners
-startBtn.addEventListener("click", start);
-stopBtn.addEventListener("click", stopTime);
-resetBtn.addEventListener("click", reset);
+startBtn.addEventListener("click", startTimer);
+stopBtn.addEventListener("click", stopTimer);
+resetBtn.addEventListener("click", resetTimer);
+toggleModeBtn.addEventListener("click", toggleCountdown);
+setCountdownBtn.addEventListener("click", applyCountdownSettings);
+
 lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
   // Set initial background color
   setBackground();
-  const borderAnimation = animateBorder();
-  borderAnimation.start();
+  drawCurrentDisplay();
 
   if (currentBackgroundUrl) {
     startRain();
@@ -436,25 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
   });
-  // Colors selector init
-  colorSelector.addEventListener("change", (e) => {
-    //prettier-ignore
-    const colorClasses = ["text-black", "text-white", "text-yellow-500", "text-blue-500", "text-red-500"];
-    let activeColor = e.target.value;
 
-    display.classList.remove(...colorClasses);
-    display.classList.add(activeColor);
-
-    laps.classList.remove(...colorClasses);
-    laps.classList.add(activeColor);
-
-    timerCircle.style.stroke = getCircularTimerColor(activeColor);
-
-    Array.from(timerControls.querySelectorAll("button")).forEach((b) => {
-      b.classList.remove(...colorClasses);
-      b.classList.add(activeColor);
-    });
-  });
   // Thumbnail Gallery  init
   thumbnailsContainer.addEventListener("click", (e) => {
     const target = e.target;
@@ -479,19 +501,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Mode toggle logic
-  modeToggle.addEventListener("change", () => {
-    isCountdown = modeToggle.checked;
-    toggleElementClasses(timerElement, isCountdown);
-    toggleElementClasses(countdownPanel, isCountdown);
-
-    if (isCountdown) {
-      lapBtn.classList.add("hidden");
-    } else {
-      countdownPanel.classList.remove("opacity-50");
-      lapBtn.classList.remove("hidden");
-    }
-  });
   // Rain toggle logic
   rainToggle.addEventListener("change", () => {
     if (rainToggle.checked) {
@@ -503,27 +512,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Slider bindings
-  hourSlider.addEventListener("input", () => {
-    hours = parseInt(hourSlider.value);
-    updateDisplay();
-    COUNTDOWN_SECONDS = seconds + minutes * 60 + hours * 3600;
-    initCircularTimer();
-  });
-
-  minuteSlider.addEventListener("input", () => {
-    minutes = parseInt(minuteSlider.value);
-    updateDisplay();
-    COUNTDOWN_SECONDS = seconds + minutes * 60;
-    initCircularTimer();
-  });
-
-  secondSlider.addEventListener("input", () => {
-    seconds = parseInt(secondSlider.value);
-    updateDisplay();
-    COUNTDOWN_SECONDS = seconds;
-    initCircularTimer();
-  });
   // Remove cards button
   removeBtn.addEventListener("click", () => {
     removeCards();
