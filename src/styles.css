@@ -179,8 +179,8 @@ body {
 
 .circular-timer > svg > circle {
   fill: none;
-  stroke-opacity: 0.2;
-  stroke: #3b82f6;
+  stroke-opacity: 0.15;
+  stroke: #00ffff;
   stroke-width: 10;
   transform-origin: center center;
   transform: rotate(-90deg);

@@ -1,6 +1,6 @@
-// Grab elements
 // import initWorldMap from "./initWorldMap";
 import initGlobe, { isGlobeInitialized } from "./initGlobe"; // Add import
+export let isAmPmOn = false; // flag to check if AM/PM format is on
 const timer = document.querySelector(".timer");
 const wrapper = document.querySelector(".timer-wrapper");
 const startBtn = document.getElementById("startBtn");
@@ -33,25 +33,17 @@ const infoToggle = document.getElementById("infoToggle");
 const timerElement = document.querySelector(".circular-timer");
 const timerCircle = timerElement.querySelector("[data-circle]");
 // Variables
-let [seconds, minutes, hours] = [0, 0, 0];
+let [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
 let timerInterval = null;
 let isCountdown = false;
-let lapsCount = 0;
 let rainyDay = null; // store rainyDay instance globally
 let currentBackgroundUrl = null; // store current background globally
-export let isAmPmOn = false; // flag to check if AM/PM format is on
 let particleTimeout = null; // store timeout for particles
 let countdownTimer = null; // store countdown timer globally
 let COUNTDOWN_SECONDS = null; // Change this value to set desired countdown time
-let storedProgress = null; // Add this with other variables at the top
-let prevDigits = {
-  secL: "0",
-  secR: "0",
-  minL: "0",
-  minR: "0",
-  hrL: "0",
-  hrR: "0",
-};
+let storedProgress = null; // Progress of the circular timer
+//prettier-ignore
+let prevDigits = {secL: "0", secR: "0", minL: "0", minR: "0", hrL: "0", hrR: "0"};
 
 // Functions
 function initParticles() {
@@ -239,7 +231,6 @@ function stopTimer() {
   timerInterval = null;
   clearInterval(countdownTimer);
   countdownTimer = null;
-
   // Store current progress when stopping
   if (isCountdown) {
     storedProgress = timerCircle.style.strokeDashoffset;
@@ -254,16 +245,13 @@ function clearInputFields() {
 //prettier-ignore
 function resetTimer() {
   stopTimer();
-  // countdownTimer = null;
-  // clearInterval(countdownTimer);
-  [seconds, minutes, hours, lapsCount] = [0, 0, 0];
+  [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
   prevDigits = {secL: "0", secR: "0", minL: "0", minR: "0", hrL: "0", hrR: "0" };
   laps.innerHTML = "";
-  storedProgress = null; // Reset stored progress
-  COUNTDOWN_SECONDS = null; // Reset countdown seconds
+  storedProgress = null; 
+  COUNTDOWN_SECONDS = null; 
   timerCircle.style.strokeDashoffset = 1;
-  const no = document.getElementById("no");
-  no.classList.add("hidden");
+  document.getElementById("no").classList.add("hidden");
   clearInputFields();
   drawCurrentDisplay();
 }
@@ -272,7 +260,7 @@ function toggleCountdown() {
   isCountdown = !isCountdown;
   toggleModeBtn.textContent = isCountdown ? "Timer mode" : "Countdown mode";
   countdownPanel.classList.toggle("show", isCountdown);
-  timerElement.classList.toggle("opacity-100");
+  timerElement.classList.toggle("hidden");
   resetTimer();
 }
 
@@ -306,6 +294,7 @@ function applyCountdownSettings() {
   prevDigits.hrR = hrR;
 
   COUNTDOWN_SECONDS = hours * 3600 + minutes * 60 + seconds;
+  document.getElementById("no").classList.add("hidden");
 
   // Initialize circular timer
   timerCircle.style.strokeDashoffset = 0;
@@ -412,19 +401,6 @@ function runCircularTimer(resumeProgress = null) {
   }, 1000);
 }
 
-function initCircularTimer() {
-  timerCircle.style.strokeDashoffset = 0;
-  timerElement.classList.add("animatable");
-}
-
-function toggleElementClasses(element, isAdd) {
-  const showClasses = ["opacity-100", "pointer-events-auto", "translate-y-0"];
-  const hideClasses = ["opacity-0", "pointer-events-none", "translate-y-4"];
-
-  element.classList[isAdd ? "remove" : "add"](...hideClasses);
-  element.classList[isAdd ? "add" : "remove"](...showClasses);
-}
-
 function startRain() {
   cleanupRainCanvases();
   setTimeout(() => rain(), 100);
@@ -463,7 +439,6 @@ stopBtn.addEventListener("click", stopTimer);
 resetBtn.addEventListener("click", resetTimer);
 toggleModeBtn.addEventListener("click", toggleCountdown);
 setCountdownBtn.addEventListener("click", applyCountdownSettings);
-
 lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
@@ -471,7 +446,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Set initial background color
   setBackground();
   drawCurrentDisplay();
-
   if (currentBackgroundUrl) {
     startRain();
   }
@@ -513,7 +487,6 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
   });
-
   // Thumbnail Gallery  init
   thumbnailsContainer.addEventListener("click", (e) => {
     const target = e.target;
@@ -537,7 +510,6 @@ document.addEventListener("DOMContentLoaded", () => {
       testImage.src = `${newBg}?t=${Date.now()}`;
     }
   });
-
   // Rain toggle logic
   rainToggle.addEventListener("change", () => {
     if (rainToggle.checked) {
@@ -548,16 +520,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
-
-  // Remove cards button
+  // Remove cards
   removeBtn.addEventListener("click", () => {
     removeCards();
   });
-  // AM/PM toggle button
+  // AM/PM mode toggle
   timeFormatToggle.addEventListener("change", () => {
     isAmPmOn = timeFormatToggle.checked;
   });
-
+  // Info tooltip toggle
   infoToggle.addEventListener("click", () => {
     const info = document.getElementById("infoTooltip");
     info.classList.toggle("hidden");
