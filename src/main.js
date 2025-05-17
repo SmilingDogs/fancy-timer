@@ -281,11 +281,18 @@ function applyCountdownSettings() {
   drawCurrentDisplay();
 }
 
+function getLaptime() {
+  const [h, m, s] = Array.from(document.querySelectorAll(".digit")).map(
+    (digit) => digit.textContent.replace(/\s/g, "")
+  );
+  const formattedSeconds = s.slice(0, 2) + "." + (s.slice(2) || "0");
+  return `${h} h : ${m} m : ${formattedSeconds} s`;
+}
+
 function lap() {
   if (seconds !== 0 || minutes !== 0 || hours !== 0) {
-    const lapTime = timer.textContent;
     const li = document.createElement("li");
-    li.textContent = `Lap ${++lapsCount}: ${lapTime}`;
+    li.textContent = `Lap ${++lapsCount}: ${getLaptime()}`;
     li.className = "opacity-0 translate-y-2 transition-all duration-500";
 
     laps.appendChild(li);
@@ -363,16 +370,6 @@ function runCircularTimer(timerElement, resumeProgress = null) {
       timerElement.classList.remove("animatable");
     }
   }, 1000);
-}
-
-function getCircularTimerColor(tailwindColor) {
-  const colorMap = {
-    "text-white": "white",
-    "text-yellow-500": "#EAB308",
-    "text-blue-500": "rgba(59, 130, 246, 1)",
-    "text-red-500": "#EF4444",
-  };
-  return colorMap[tailwindColor] || "rgba(59, 130, 246, 1)";
 }
 
 function initCircularTimer() {
