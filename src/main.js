@@ -296,9 +296,10 @@ function applyCountdownSettings() {
   COUNTDOWN_SECONDS = hours * 3600 + minutes * 60 + seconds;
   document.getElementById("no").classList.add("hidden");
 
-  // Initialize circular timer
-  timerCircle.style.strokeDashoffset = 0;
+  // Initialize circular timer with full fill
+  timerCircle.style.strokeDashoffset = "0";
   timerElement.classList.add("animatable");
+  storedProgress = "0";
 
   drawCurrentDisplay();
 }
@@ -365,7 +366,6 @@ function setBackground() {
     `;
   }
 }
-
 function updateCircularProgress(remainingSeconds, totalSeconds) {
   if (remainingSeconds <= 0) {
     timerElement.classList.remove("animatable");
@@ -381,24 +381,28 @@ function runCircularTimer(resumeProgress = null) {
   const totalSeconds = COUNTDOWN_SECONDS;
   const currentSeconds = hours * 3600 + minutes * 60 + seconds;
 
+  // Update progress immediately
   if (resumeProgress !== null) {
     timerCircle.style.strokeDashoffset = resumeProgress;
   } else {
-    // Update progress immediately
-    updateCircularProgress(currentSeconds, totalSeconds);
+    const progress = currentSeconds / totalSeconds;
+    timerCircle.style.strokeDashoffset = 1 - progress;
   }
 
   if (countdownTimer) {
     clearInterval(countdownTimer);
   }
 
-  countdownTimer = setInterval(() => {
-    const remainingSeconds = hours * 3600 + minutes * 60 + seconds;
-    updateCircularProgress(remainingSeconds, totalSeconds);
-    if (remainingSeconds <= 0) {
-      clearInterval(countdownTimer);
-    }
-  }, 1000);
+  // Wait for next countdown tick to start interval
+  setTimeout(() => {
+    countdownTimer = setInterval(() => {
+      const remainingSeconds = hours * 3600 + minutes * 60 + seconds;
+      updateCircularProgress(remainingSeconds, totalSeconds);
+      if (remainingSeconds <= 0) {
+        clearInterval(countdownTimer);
+      }
+    }, 1000);
+  }, 0);
 }
 
 function startRain() {
