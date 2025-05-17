@@ -41,6 +41,7 @@ let rainyDay = null; // store rainyDay instance globally
 let currentBackgroundUrl = null; // store current background globally
 export let isAmPmOn = false; // flag to check if AM/PM format is on
 let particleTimeout = null; // store timeout for particles
+let countdownTimer = null; // store countdown timer globally
 let COUNTDOWN_SECONDS = null; // Change this value to set desired countdown time
 let storedProgress = null; // Add this with other variables at the top
 let prevDigits = {
@@ -176,11 +177,23 @@ function runTimer() {
 
 function runCountdown() {
   if (seconds === 0 && minutes === 0 && hours === 0) {
+    timerCircle.style.strokeDashoffset = "1";
+    timerElement.classList.remove("animatable");
     stopTimer();
     rockAndRoll();
+    const no = document.getElementById("no");
+    no.classList.remove("hidden");
+    const audio = new Audio(
+      "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
+    );
+    audio.play();
     return;
   }
 
+  // Only run circular timer if it's not already running
+  if (!countdownTimer) {
+    runCircularTimer(storedProgress);
+  }
   if (seconds > 0) {
     seconds--;
   } else if (minutes > 0) {
@@ -208,7 +221,14 @@ function updateDigits() {
 }
 
 function startTimer() {
-  if (timerInterval) return;
+  if (timerInterval !== null) clearInterval(timerInterval);
+  if (countdownTimer !== null) clearInterval(countdownTimer);
+
+  // Start circular timer immediately if in countdown mode
+  if (isCountdown && COUNTDOWN_SECONDS) {
+    runCircularTimer(storedProgress);
+  }
+
   timerInterval = setInterval(() => {
     isCountdown ? runCountdown() : runTimer();
   }, 1000);
@@ -217,6 +237,13 @@ function startTimer() {
 function stopTimer() {
   clearInterval(timerInterval);
   timerInterval = null;
+  clearInterval(countdownTimer);
+  countdownTimer = null;
+
+  // Store current progress when stopping
+  if (isCountdown) {
+    storedProgress = timerCircle.style.strokeDashoffset;
+  }
 }
 
 function clearInputFields() {
@@ -224,20 +251,19 @@ function clearInputFields() {
   setMinutesInput.value = "";
   setHoursInput.value = "";
 }
-
+//prettier-ignore
 function resetTimer() {
   stopTimer();
-  [seconds, minutes, hours] = [0, 0, 0];
-  prevDigits = {
-    secL: "0",
-    secR: "0",
-    minL: "0",
-    minR: "0",
-    hrL: "0",
-    hrR: "0",
-  };
+  // countdownTimer = null;
+  // clearInterval(countdownTimer);
+  [seconds, minutes, hours, lapsCount] = [0, 0, 0];
+  prevDigits = {secL: "0", secR: "0", minL: "0", minR: "0", hrL: "0", hrR: "0" };
   laps.innerHTML = "";
-  lapsCount = 0;
+  storedProgress = null; // Reset stored progress
+  COUNTDOWN_SECONDS = null; // Reset countdown seconds
+  timerCircle.style.strokeDashoffset = 1;
+  const no = document.getElementById("no");
+  no.classList.add("hidden");
   clearInputFields();
   drawCurrentDisplay();
 }
@@ -246,6 +272,7 @@ function toggleCountdown() {
   isCountdown = !isCountdown;
   toggleModeBtn.textContent = isCountdown ? "Timer mode" : "Countdown mode";
   countdownPanel.classList.toggle("show", isCountdown);
+  timerElement.classList.toggle("opacity-100");
   resetTimer();
 }
 
@@ -277,6 +304,12 @@ function applyCountdownSettings() {
   prevDigits.minR = minR;
   prevDigits.hrL = hrL;
   prevDigits.hrR = hrR;
+
+  COUNTDOWN_SECONDS = hours * 3600 + minutes * 60 + seconds;
+
+  // Initialize circular timer
+  timerCircle.style.strokeDashoffset = 0;
+  timerElement.classList.add("animatable");
 
   drawCurrentDisplay();
 }
@@ -344,30 +377,37 @@ function setBackground() {
   }
 }
 
-function runCircularTimer(timerElement, resumeProgress = null) {
-  let timeLeft = COUNTDOWN_SECONDS;
-  // Initialize timer state
-  initCircularTimer();
+function updateCircularProgress(remainingSeconds, totalSeconds) {
+  if (remainingSeconds <= 0) {
+    timerElement.classList.remove("animatable");
+    timerCircle.style.strokeDashoffset = "1";
+    return;
+  }
+
+  const progress = remainingSeconds / totalSeconds;
+  timerCircle.style.strokeDashoffset = 1 - progress;
+}
+
+function runCircularTimer(resumeProgress = null) {
+  const totalSeconds = COUNTDOWN_SECONDS;
+  const currentSeconds = hours * 3600 + minutes * 60 + seconds;
 
   if (resumeProgress !== null) {
-    // Resume from stored progress
     timerCircle.style.strokeDashoffset = resumeProgress;
-    // Adjust timeLeft based on progress
-    timeLeft = Math.round(COUNTDOWN_SECONDS * (1 - resumeProgress));
   } else {
-    // Start fresh
-    const initialProgress = 1 / COUNTDOWN_SECONDS;
-    timerCircle.style.strokeDashoffset = initialProgress;
+    // Update progress immediately
+    updateCircularProgress(currentSeconds, totalSeconds);
+  }
+
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
   }
 
   countdownTimer = setInterval(() => {
-    timeLeft--;
-    const progress = (COUNTDOWN_SECONDS - timeLeft) / COUNTDOWN_SECONDS;
-    timerCircle.style.strokeDashoffset = progress;
-
-    if (timeLeft <= 0) {
+    const remainingSeconds = hours * 3600 + minutes * 60 + seconds;
+    updateCircularProgress(remainingSeconds, totalSeconds);
+    if (remainingSeconds <= 0) {
       clearInterval(countdownTimer);
-      timerElement.classList.remove("animatable");
     }
   }, 1000);
 }
