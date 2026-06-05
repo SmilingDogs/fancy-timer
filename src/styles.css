@@ -224,7 +224,7 @@ button:hover {
 .swiper-pagination-bullet {
   position: relative;
   background: white;
-  transform: translate(0px, 250px);
+  transform: translate(0px, 50px);
   opacity: 0.5;
   width: 10px;
   height: 10px;
@@ -233,7 +233,7 @@ button:hover {
 .swiper-pagination-bullet-active {
   opacity: 1;
   position: relative;
-  transform: translate(0px, 250px);
+  transform: translate(0px, 50px);
 }
 
 .swiper-pagination-bullet::before {
@@ -280,11 +280,11 @@ button:hover {
 }
 @media (min-width: 1500px) {
   .swiper-pagination-bullet {
-    transform: translate(0px, 290px);
+    transform: translate(0px, 50px);
   }
 
   .swiper-pagination-bullet-active {
-    transform: translate(0px, 290px);
+    transform: translate(0px, 50px);
   }
 }
 
