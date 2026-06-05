@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,192 +22,136 @@
         <div class="swiper-slide relative">
           <!-- Background container -->
           <div
-            class="absolute inset-0 bg-no-repeat bg-cover z-100 top-0 left-0 w-full"
+            class="absolute inset-0 bg-no-repeat bg-cover top-0 left-0 w-full"
             id="background"
           ></div>
           <!-- Main content container -->
           <div
-            class="relative z-500 flex items-center justify-center min-h-screen p-4"
+            class="relative z-500 flex flex-col items-center justify-center min-h-screen p-4"
           >
-            <!-- Stopwatch/Timer container -->
-            <div
-              class="bg-transparent p-8 pt-4 rounded-lg shadow-xl w-full max-w-md 3xl:max-w-xl text-center"
-            >
-              <!-- Timer Display -->
-              <div
-                id="display"
-                class="text-7xl 3xl:text-8xl font-['Orbitron'] mb-6 animate-pulse"
-              >
-                00:00:00
-              </div>
-              <!-- Timer control buttons -->
-              <div
-                class="timer-controls flex justify-center 3xl:text-2xl space-x-4 mb-6"
-              >
-                <button
-                  id="startBtn"
-                  class="btn-primary bg-transparent text-black"
-                >
-                  Start
-                </button>
-                <button
-                  id="stopBtn"
-                  class="btn-secondary bg-transparent text-black"
-                >
-                  Stop
-                </button>
-                <button
-                  id="resetBtn"
-                  class="btn-danger bg-transparent text-black"
-                >
-                  Reset
-                </button>
-                <button
-                  id="lapBtn"
-                  class="btn-primary bg-transparent text-black"
-                >
-                  Lap
-                </button>
-              </div>
-              <!-- Laps recordings -->
-              <div class="text-left max-h-30 overflow-y-auto 3xl:text-xl">
-                <ul id="laps" class="text-600 space-y-2"></ul>
-              </div>
-
-              <div class="flex justify-between items-center mt-4">
-                <!-- Rain Toggle button -->
-                <div class="flex justify-end pb-4">
-                  <label
-                    class="relative inline-block w-30 3xl:w-36 h-10 3xl:h-14 hover:cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      id="rainToggle"
-                      class="peer hidden"
-                    />
-
-                    <!-- Background -->
-                    <span
-                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
-                    ></span>
-                    <!-- Toggle circle -->
-                    <span
-                      class="absolute top-1 3xl:top-2 left-2 w-8 3xl:w-10 h-8 3xl:h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-18 3xl:peer-checked:translate-x-22"
-                    ></span>
-                    <!-- RAIN text -->
-                    <span
-                      class="3xl:text-base absolute right-4 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
-                    >
-                      Rain!
-                    </span>
-                    <!-- NO RAIN text -->
-                    <span
-                      class="3xl:text-base absolute left-3 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
-                    >
-                      No Rain
-                    </span>
-                  </label>
+            <!--Timer-->
+            <div class="timer-wrapper" id="timerWrapper">
+              <div class="timer" id="timer">
+                <div class="unit">
+                  <div class="digit" id="hours">
+                    <span id="hour-left">0</span><span id="hour-right">0</span>
+                  </div>
+                  <span class="button-title text-white">Hours</span>
                 </div>
-                <!-- Mode Toggle button -->
-                <div class="flex justify-end pb-4">
-                  <label
-                    class="relative inline-block w-34 3xl:w-43 h-10 3xl:h-14 hover:cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      id="modeToggle"
-                      class="peer hidden"
-                    />
-
-                    <!-- Background -->
-                    <span
-                      class="block w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
-                    ></span>
-                    <!-- Toggle circle -->
-                    <span
-                      class="absolute top-1 3xl:top-2 left-2 w-8 3xl:w-10 h-8 3xl:h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-22 3xl:peer-checked:translate-x-29"
-                    ></span>
-                    <!-- Timer text -->
-                    <span
-                      class="3xl:text-base absolute right-4 3xl:right-10 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-black opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
-                    >
-                      Timer
-                    </span>
-                    <!-- Countdown text -->
-                    <span
-                      class="3xl:text-base absolute top-1/2 left-2.5 3xl:left-2 transform -translate-y-1/2 text-[12px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
-                    >
-                      Countdown
-                    </span>
-                  </label>
+                <div class="colon">:</div>
+                <div class="unit">
+                  <div class="digit" id="minutes">
+                    <span id="min-left">0</span><span id="min-right">0</span>
+                  </div>
+                  <span class="button-title text-white">Minutes</span>
                 </div>
-                <!-- Timer colors selector -->
-                <div class="flex justify-end pb-4 3xl:text-xl">
-                  <select
-                    id="colorSelector"
-                    class="px-4 py-2 rounded-lg shadow-md text-gray-700 bg-gray-300 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                  >
-                    <option value="text-black" class="hover:bg-gray-500">
-                      Black
-                    </option>
-                    <option value="text-white">White</option>
-                    <option value="text-yellow-500">Yellow</option>
-                    <option value="text-blue-500">Blue</option>
-                    <option value="text-red-500">Red</option>
-                  </select>
+                <div class="colon">:</div>
+                <div class="unit">
+                  <div class="digit" id="seconds">
+                    <span id="sec-left">0</span><span id="sec-right">0</span>
+                  </div>
+                  <span class="button-title text-white">Seconds</span>
                 </div>
               </div>
-
-              <audio
-                id="beep"
-                src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-              ></audio>
             </div>
-            <!-- Countdown Settings Panel -->
+            <div class="buttons">
+              <button id="startBtn">Start</button>
+              <button id="stopBtn">Stop</button>
+              <button id="resetBtn">Reset</button>
+              <button id="lapBtn">Lap</button>
+              <button id="toggleModeBtn">Countdown mode</button>
+            </div>
+            <!--Countdown control panel-->
+            <!--prettier-ignore-->
+            <div class="flex items-start justify-center gap-4 mt-4">
+            <div id="countdownPanel" class="countdown-panel">
+              <input type="number" id="setHours" min="0" max="99" placeholder="HH"/>
+              <input type="number" id="setMinutes" min="0" max="59" placeholder="MM"/>
+              <input type="number" id="setSeconds" min="0" max="59" placeholder="SS"/>
+              <button id="setCountdownBtn">Set</button>
+            </div>
+            </div>
+            <!-- Laps recordings -->
             <div
-              id="countdownPanel"
-              class="ml-4 h-full opacity-0 pointer-events-none translate-y-4 transition-all duration-500 ease-in-out flex flex-col justify-center space-y-6 3xl:space-y-10"
+              class="text-left max-h-35 overflow-y-auto 3xl:text-xl mt-4 pr-4"
             >
-              <div class="flex flex-col items-center gap-2 3xl:gap-4">
-                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
-                  Hours
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="24"
-                  value="0"
-                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
-                  id="hourSlider"
-                />
+              <ul id="laps" class="text-600 text-white space-y-2"></ul>
+            </div>
+            <div class="flex justify-start gap-6 items-center mt-4">
+              <!-- Rain Toggle button -->
+              <div class="flex justify-end pb-4" id="rainToggleContainer">
+                <label
+                  class="relative inline-block w-30 3xl:w-36 h-10 3xl:h-14 hover:cursor-pointer"
+                >
+                  <input type="checkbox" id="rainToggle" class="peer hidden" />
+
+                  <!-- Background -->
+                  <span
+                    class="block w-full h-full bg-[#0f172a] border-1 border-white rounded-full peer-checked:bg-blue-600 transition-colors duration-300"
+                  ></span>
+                  <!-- Toggle circle -->
+                  <span
+                    class="absolute top-1 left-2 3xl:top-2 w-8 3xl:w-10 h-8 3xl:h-10 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-18 3xl:peer-checked:translate-x-22"
+                  ></span>
+                  <!-- RAIN text -->
+                  <span
+                    class="3xl:text-base absolute right-4 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-white opacity-100 peer-checked:opacity-0 transition-opacity duration-300 z-10 tracking-widest"
+                  >
+                    Rain!
+                  </span>
+                  <!-- NO RAIN text -->
+                  <span
+                    class="3xl:text-base absolute left-3 top-1/2 transform -translate-y-1/2 text-[12px] font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-300 z-10 tracking-widest"
+                  >
+                    No Rain
+                  </span>
+                </label>
               </div>
-              <div class="flex flex-col items-center gap-2 3xl:gap-4">
-                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
-                  Minutes
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="59"
-                  value="0"
-                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
-                  id="minuteSlider"
+              <!-- Thumbnail gallery  -->
+              <div class="flex space-x-2 mt-2" id="thumbnailsContainer">
+                <div
+                  class="bg-[#0f172a] w-16 h-16 3xl:w-20 3xl:h-20 border border-gray-300 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                ></div>
+                <img
+                  src="/assets/amalfi-night.webp"
+                  alt="Background 2"
+                  data-bg="/assets/amalfi-night.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
                 />
-              </div>
-              <div class="flex flex-col items-center gap-2 3xl:gap-4">
-                <div class="text-sm text-white font-['Orbitron'] 3xl:text-2xl">
-                  Seconds
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="59"
-                  value="1"
-                  class="vertical-slider w-32 h-2 3xl:w-48 3xl:h-4"
-                  id="secondSlider"
+                <img
+                  src="/assets/bridge.webp"
+                  alt="Background 3"
+                  data-bg="/assets/bridge.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                />
+                <img
+                  src="/assets/desert.webp"
+                  alt="Background 4"
+                  data-bg="/assets/desert.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                />
+                <img
+                  src="/assets/cave.webp"
+                  alt="Background 5"
+                  data-bg="/assets/cave.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                />
+                <img
+                  src="/assets/waterfall.webp"
+                  alt="Background 6"
+                  data-bg="/assets/waterfall.webp"
+                  class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
                 />
               </div>
             </div>
+            <div
+              id="remainingTimeBar"
+              class="absolute w-full h-10 bottom-0 right-0 bg-[#00ffff] hidden"
+            ></div>
+            <audio
+              id="beep"
+              src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+            ></audio>
           </div>
         </div>
 
@@ -318,42 +262,6 @@
       </div>
       <!-- Pagination -->
       <div class="swiper-pagination flex flex-col gap-4 pr-2"></div>
-    </div>
-    <!-- Thumbnail gallery  -->
-    <div
-      class="fixed bottom-4 left-4 flex space-x-2 z-500"
-      id="thumbnailsContainer"
-    >
-      <img
-        src="/assets/amalfi-night.webp"
-        alt="Background 2"
-        data-bg="/assets/amalfi-night.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
-      <img
-        src="/assets/bridge.webp"
-        alt="Background 3"
-        data-bg="/assets/bridge.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
-      <img
-        src="/assets/desert.webp"
-        alt="Background 4"
-        data-bg="/assets/desert.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
-      <img
-        src="/assets/cave.webp"
-        alt="Background 5"
-        data-bg="/assets/cave.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
-      <img
-        src="/assets/waterfall.webp"
-        alt="Background 6"
-        data-bg="/assets/waterfall.webp"
-        class="w-16 3xl:w-20 h-16 3xl:h-20 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-      />
     </div>
     <!-- Library scripts  -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

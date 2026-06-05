@@ -1,40 +1,293 @@
-// Grab elements
 // import initWorldMap from "./initWorldMap";
 import initGlobe, { isGlobeInitialized } from "./initGlobe"; // Add import
-const display = document.getElementById("display");
-const colorSelector = document.getElementById("colorSelector");
-const laps = document.getElementById("laps");
-const beep = document.getElementById("beep");
-
+export let isAmPmOn = false; // flag to check if AM/PM format is on
+const timer = document.querySelector(".timer");
+const wrapper = document.querySelector(".timer-wrapper");
 const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 const resetBtn = document.getElementById("resetBtn");
+const countdownPanel = document.getElementById("countdownPanel");
+const toggleModeBtn = document.getElementById("toggleModeBtn");
+const setSecondsInput = document.getElementById("setSeconds");
+const setMinutesInput = document.getElementById("setMinutes");
+const setHoursInput = document.getElementById("setHours");
+const setCountdownBtn = document.getElementById("setCountdownBtn");
+const elements = {
+  secL: document.getElementById("sec-left"),
+  secR: document.getElementById("sec-right"),
+  minL: document.getElementById("min-left"),
+  minR: document.getElementById("min-right"),
+  hrL: document.getElementById("hour-left"),
+  hrR: document.getElementById("hour-right"),
+};
+const laps = document.getElementById("laps");
+const beep = document.getElementById("beep");
 const lapBtn = document.getElementById("lapBtn");
 const removeBtn = document.getElementById("removeCardsBtn");
 const thumbnailsContainer = document.getElementById("thumbnailsContainer");
-const timerControls = document.querySelector(".timer-controls");
-const modeToggle = document.getElementById("modeToggle");
 const rainToggle = document.getElementById("rainToggle");
-const countdownPanel = document.getElementById("countdownPanel");
-const hourSlider = document.getElementById("hourSlider");
-const minuteSlider = document.getElementById("minuteSlider");
-const secondSlider = document.getElementById("secondSlider");
 const recentTimesTitle = document.getElementById("recentTimesTitle");
 const timeFormatElement = document.getElementById("timeFormat");
 const timeFormatToggle = document.getElementById("timeFormatToggle");
+const remainingTimeBar = document.getElementById("remainingTimeBar");
 const infoToggle = document.getElementById("infoToggle");
 // Variables
-let [seconds, minutes, hours] = [0, 0, 0];
-let timer = null;
-let lapsCount = 0;
+let [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
+let timerInterval = null;
 let isCountdown = false;
 let rainyDay = null; // store rainyDay instance globally
-let currentBackgroundUrl = "/assets/desert.webp"; // store current background globally
-// let worldMapRoot = null; //store world map root element globally
-// let isWorldMapInitialized = false; // flag to check if world map is initialized
-export let isAmPmOn = false; // flag to check if AM/PM format is on
+let currentBackgroundUrl = null; // store current background globally
 let particleTimeout = null; // store timeout for particles
+let countdownTimer = null; // store countdown timer globally
+let COUNTDOWN_SECONDS = null; // Change this value to set desired countdown time
+//prettier-ignore
+let prevDigits = {secL: "0", secR: "0", minL: "0", minR: "0", hrL: "0", hrR: "0"};
+
 // Functions
+
+function formatTime(value) {
+  return value.toString().padStart(2, "0").split("");
+}
+
+function animateDigit(el, newVal, key) {
+  if (prevDigits[key] === newVal) return;
+
+  const oldSpan = el.cloneNode(true);
+  oldSpan.classList.add("old-digit");
+  el.textContent = "";
+
+  const newSpan = document.createElement("span");
+  newSpan.textContent = newVal;
+  newSpan.classList.add("new-digit");
+
+  el.appendChild(oldSpan);
+  el.appendChild(newSpan);
+
+  setTimeout(() => {
+    el.textContent = newVal;
+  }, 400);
+
+  prevDigits[key] = newVal;
+}
+
+function drawCurrentDisplay() {
+  let formattedSeconds = seconds % 60;
+  let formattedMinutes = minutes % 60;
+  let formattedHours = hours % 60;
+
+  const [sL, sR] = formatTime(formattedSeconds);
+  const [mL, mR] = formatTime(formattedMinutes);
+  const [hL, hR] = formatTime(formattedHours);
+
+  elements.secL.textContent = sL;
+  elements.secR.textContent = sR;
+  elements.minL.textContent = mL;
+  elements.minR.textContent = mR;
+  elements.hrL.textContent = hL;
+  elements.hrR.textContent = hR;
+}
+
+function runTimer() {
+  if (hours === 99) {
+    stopTimer();
+    rockAndRoll();
+    return;
+  }
+  seconds++;
+  if (seconds === 60) {
+    seconds = 0;
+    minutes++;
+  }
+  if (minutes === 60) {
+    minutes = 0;
+    hours++;
+  }
+  updateDigits();
+}
+
+function runCountdown() {
+  if (seconds === 0 && minutes === 0 && hours === 0) {
+    stopTimer();
+    rockAndRoll();
+    const audio = new Audio(
+      "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg",
+    );
+    audio.play();
+    return;
+  }
+  if (seconds > 0) {
+    seconds--;
+    remainingTimeBar.style.width =
+      (seconds / COUNTDOWN_SECONDS) * window.innerWidth + "px";
+  } else if (minutes > 0) {
+    minutes--;
+    seconds = 59;
+  } else if (hours > 0) {
+    hours--;
+    minutes = 59;
+    seconds = 59;
+  }
+  updateDigits();
+}
+
+function updateDigits() {
+  const [sL, sR] = formatTime(seconds % 60);
+  const [mL, mR] = formatTime(minutes % 60);
+  const [hL, hR] = formatTime(hours % 60);
+
+  animateDigit(elements.secR, sR, "secR");
+  animateDigit(elements.secL, sL, "secL");
+  animateDigit(elements.minR, mR, "minR");
+  animateDigit(elements.minL, mL, "minL");
+  animateDigit(elements.hrR, hR, "hrR");
+  animateDigit(elements.hrL, hL, "hrL");
+}
+
+function startTimer() {
+  if (timerInterval !== null) clearInterval(timerInterval);
+  if (countdownTimer !== null) clearInterval(countdownTimer);
+
+  timerInterval = setInterval(() => {
+    isCountdown ? runCountdown() : runTimer();
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  clearInterval(countdownTimer);
+  countdownTimer = null;
+}
+
+function clearInputFields() {
+  setSecondsInput.value = "";
+  setMinutesInput.value = "";
+  setHoursInput.value = "";
+}
+//prettier-ignore
+function resetTimer() {
+  stopTimer();
+  [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
+  prevDigits = {secL: "0", secR: "0", minL: "0", minR: "0", hrL: "0", hrR: "0" };
+  laps.innerHTML = "";
+  COUNTDOWN_SECONDS = null;
+  clearInputFields();
+  drawCurrentDisplay();
+  remainingTimeBar.style.width = "100%"; 
+}
+
+function toggleCountdown() {
+  isCountdown = !isCountdown;
+  toggleModeBtn.textContent = isCountdown ? "Timer mode" : "Countdown mode";
+  countdownPanel.classList.toggle("show", isCountdown);
+  remainingTimeBar.classList.toggle("hidden", !isCountdown);
+  resetTimer();
+}
+
+function rockAndRoll() {
+  // Restart both animations
+  timer.classList.remove("flash-end");
+  wrapper.classList.remove("shake");
+  void timer.offsetWidth;
+  timer.classList.add("flash-end");
+  wrapper.classList.add("shake");
+}
+
+function applyCountdownSettings() {
+  const h = parseInt(setHoursInput.value) || 0;
+  const m = parseInt(setMinutesInput.value) || 0;
+  const s = parseInt(setSecondsInput.value) || 0;
+
+  hours = Math.min(h, 99);
+  minutes = Math.min(m, 59);
+  seconds = Math.min(s, 59);
+
+  const [secL, secR] = formatTime(seconds);
+  const [minL, minR] = formatTime(minutes);
+  const [hrL, hrR] = formatTime(hours);
+
+  prevDigits.secL = secL;
+  prevDigits.secR = secR;
+  prevDigits.minL = minL;
+  prevDigits.minR = minR;
+  prevDigits.hrL = hrL;
+  prevDigits.hrR = hrR;
+
+  COUNTDOWN_SECONDS = hours * 3600 + minutes * 60 + seconds;
+
+  drawCurrentDisplay();
+}
+
+function getLaptime() {
+  const [h, m, s] = Array.from(document.querySelectorAll(".digit")).map(
+    (digit) => digit.textContent.replace(/\s/g, ""),
+  );
+  const formattedSeconds = s.slice(0, 2) + "." + (s.slice(2) || "0");
+  return `${h} h : ${m} m : ${formattedSeconds} s`;
+}
+
+function lap() {
+  if (seconds !== 0 || minutes !== 0 || hours !== 0) {
+    const li = document.createElement("li");
+    li.textContent = `Lap ${++lapsCount}: ${getLaptime()}`;
+    li.className = "opacity-0 translate-y-2 transition-all duration-500";
+
+    laps.appendChild(li);
+
+    setTimeout(() => {
+      li.className = "opacity-100 translate-y-0 transition-all duration-500";
+    }, 10);
+
+    playBeep();
+  }
+}
+
+function playBeep() {
+  beep.currentTime = 0;
+  beep.play();
+}
+
+function rain() {
+  rainyDay = new RainyDay({ image: "background" });
+}
+
+function cleanupRainCanvases() {
+  if (rainyDay) {
+    rainyDay.destroy();
+    rainyDay = null;
+  }
+  const rainCanvas =
+    document.getElementById("background").previousElementSibling;
+  if (rainCanvas) {
+    rainCanvas.remove();
+  }
+
+  setBackground();
+}
+
+function setBackground() {
+  const background = document.getElementById("background");
+  if (currentBackgroundUrl) {
+    background.style.cssText = `
+      background-image: url('${currentBackgroundUrl}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    `;
+    document.getElementById("rainToggleContainer").classList.remove("hidden");
+  } else {
+    background.style.cssText = `
+      background-color: #0f172a;
+    `;
+    document.getElementById("rainToggleContainer").classList.add("hidden");
+  }
+}
+
+function startRain() {
+  cleanupRainCanvases();
+  setTimeout(() => rain(), 100);
+}
+
 function initParticles() {
   if (window.particlesJS) {
     particlesJS("particles-js", {
@@ -96,153 +349,6 @@ function initParticles() {
   }
 }
 
-function updateDisplay() {
-  const h = hours.toString().padStart(2, "0");
-  const m = minutes.toString().padStart(2, "0");
-  const s = seconds.toString().padStart(2, "0");
-  display.textContent = `${h}:${m}:${s}`;
-}
-
-function stopwatch() {
-  seconds++;
-  if (seconds === 60) {
-    seconds = 0;
-    minutes++;
-    if (minutes === 60) {
-      minutes = 0;
-      hours++;
-    }
-  }
-  updateDisplay();
-}
-
-function countdown() {
-  if (hours === 0 && minutes === 0 && seconds === 0) {
-    clearInterval(timer);
-    display.textContent = "Time is up!";
-    display.classList.add("text-[50px]", "3xl:text-[70px]", "font-semibold");
-    const audio = new Audio(
-      "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-    );
-    audio.play();
-    startBtn.classList.add("hidden");
-    stopBtn.classList.add("hidden");
-    return;
-  }
-
-  if (seconds > 0) {
-    seconds--;
-  } else if (minutes > 0) {
-    minutes--;
-    seconds = 59;
-  } else if (hours > 0) {
-    hours--;
-    minutes = 59;
-    seconds = 59;
-  }
-  updateDisplay();
-}
-
-function start() {
-  playBeep();
-  startBtn.classList.add("hidden");
-  if (timer !== null) clearInterval(timer);
-  if (isCountdown) {
-    disableCountdownPanel();
-    timer = setInterval(countdown, 1000);
-  } else {
-    timer = setInterval(stopwatch, 1000);
-  }
-}
-
-function stopTime() {
-  playBeep();
-  clearInterval(timer);
-  startBtn.classList.remove("hidden");
-}
-
-function reset() {
-  playBeep();
-  clearInterval(timer);
-  [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
-  laps.innerHTML = "";
-  display.classList.remove("text-[50px]", "3xl:text-[70px]", "font-semibold");
-  display.textContent = "00:00:00";
-  startBtn.classList.remove("hidden");
-  stopBtn.classList.remove("hidden");
-  updateDisplay();
-  if (isCountdown) enableCountdownPanel();
-}
-
-function lap() {
-  if (seconds !== 0 || minutes !== 0 || hours !== 0) {
-    const lapTime = display.textContent;
-    const li = document.createElement("li");
-    li.textContent = `Lap ${++lapsCount}: ${lapTime}`;
-    li.className = "opacity-0 translate-y-2 transition-all duration-500";
-
-    laps.appendChild(li);
-
-    setTimeout(() => {
-      li.className = "opacity-100 translate-y-0 transition-all duration-500";
-    }, 10);
-
-    playBeep();
-  }
-}
-
-function playBeep() {
-  beep.currentTime = 0;
-  beep.play();
-}
-
-function rain() {
-  rainyDay = new RainyDay({ image: "background" });
-}
-
-function cleanupRainCanvases() {
-  if (rainyDay) {
-    rainyDay.destroy();
-    rainyDay = null;
-  }
-  const rainCanvas =
-    document.getElementById("background").previousElementSibling;
-  if (rainCanvas) {
-    rainCanvas.remove(); // Remove the canvas element
-  }
-
-  // Restore the background image
-  const background = document.getElementById("background");
-  background.style.cssText = `
-    background-image: url('${currentBackgroundUrl}');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-`;
-}
-
-function startRain() {
-  cleanupRainCanvases();
-  setTimeout(() => rain(), 100);
-}
-
-function disableCountdownPanel() {
-  countdownPanel.classList.add("opacity-50", "pointer-events-none");
-  hourSlider.disabled = true;
-  minuteSlider.disabled = true;
-  secondSlider.disabled = true;
-}
-
-function enableCountdownPanel() {
-  countdownPanel.classList.remove("opacity-50", "pointer-events-none");
-  hourSlider.disabled = false;
-  minuteSlider.disabled = false;
-  secondSlider.disabled = false;
-  hourSlider.value = 1;
-  minuteSlider.value = 1;
-  secondSlider.value = 1;
-}
-
 function destroyParticles() {
   const particlesContainer = document.getElementById("particles-js");
   if (particlesContainer) {
@@ -253,7 +359,7 @@ function destroyParticles() {
 function removeCards() {
   const recentTimes = document.getElementById("recentTimes");
   const existingCards = Array.from(
-    recentTimes.querySelectorAll(`[data-country]`)
+    recentTimes.querySelectorAll(`[data-country]`),
   );
 
   existingCards.forEach((card) => {
@@ -271,14 +377,21 @@ function removeCards() {
 }
 
 // Event Listeners
-startBtn.addEventListener("click", start);
-stopBtn.addEventListener("click", stopTime);
-resetBtn.addEventListener("click", reset);
+startBtn.addEventListener("click", startTimer);
+stopBtn.addEventListener("click", stopTimer);
+resetBtn.addEventListener("click", resetTimer);
+toggleModeBtn.addEventListener("click", toggleCountdown);
+setCountdownBtn.addEventListener("click", applyCountdownSettings);
 lapBtn.addEventListener("click", lap);
 
 // Init after DOM loaded
 document.addEventListener("DOMContentLoaded", () => {
-  startRain(); // Start rain effect
+  // Set initial background color
+  setBackground();
+  drawCurrentDisplay();
+  if (currentBackgroundUrl) {
+    startRain();
+  }
   // Swiper init
   const swiper = new Swiper(".swiper", {
     direction: "vertical",
@@ -302,44 +415,20 @@ document.addEventListener("DOMContentLoaded", () => {
     on: {
       slideChange: function () {
         if (this.activeIndex === 0) {
-          setTimeout(() => {
-            thumbnailsContainer.style.display = "flex";
-          }, 800);
-          // document.getElementById("worldMap").style.display = "none";
           document.getElementById("globeDiv").style.display = "none";
         } else {
-          thumbnailsContainer.style.display = "none";
-
           if (!isGlobeInitialized) {
             // initWorldMap();
             initGlobe(); // Initialize the globe
           }
-          // document.getElementById("worldMap").style.display = "block";
           document.getElementById("globeDiv").style.display = "block";
         }
 
-        // ✅ Always clean and restart particles AFTER
+        // ✅ Always clean and restart particles
         destroyParticles();
         initParticles();
       },
     },
-  });
-  // Colors selector init
-  colorSelector.addEventListener("change", (e) => {
-    //prettier-ignore
-    const colorClasses = ["text-black", "text-white", "text-yellow-500", "text-blue-500", "text-red-500"];
-    let activeColor = e.target.value;
-
-    display.classList.remove(...colorClasses);
-    display.classList.add(activeColor);
-
-    laps.classList.remove(...colorClasses);
-    laps.classList.add(activeColor);
-
-    Array.from(timerControls.querySelectorAll("button")).forEach((b) => {
-      b.classList.remove(...colorClasses);
-      b.classList.add(activeColor);
-    });
   });
   // Thumbnail Gallery  init
   thumbnailsContainer.addEventListener("click", (e) => {
@@ -354,43 +443,18 @@ document.addEventListener("DOMContentLoaded", () => {
       testImage.onload = () => {
         background.className = "fixed inset-0 bg-no-repeat bg-cover";
         if (!rainToggle.checked) {
-          startRain();
+          if (currentBackgroundUrl) {
+            startRain();
+          }
         } else {
           cleanupRainCanvases();
         }
       };
       testImage.src = `${newBg}?t=${Date.now()}`;
-    }
-  });
-
-  // Mode toggle logic
-  modeToggle.addEventListener("change", () => {
-    isCountdown = modeToggle.checked;
-    if (isCountdown) {
-      countdownPanel.classList.remove(
-        "opacity-0",
-        "pointer-events-none",
-        "translate-y-4"
-      );
-      countdownPanel.classList.add(
-        "opacity-100",
-        "pointer-events-auto",
-        "translate-y-0"
-      );
-      lapBtn.classList.add("hidden");
     } else {
-      countdownPanel.classList.remove(
-        "opacity-100",
-        "opacity-50",
-        "pointer-events-auto",
-        "translate-y-0"
-      );
-      countdownPanel.classList.add(
-        "opacity-0",
-        "pointer-events-none",
-        "translate-y-4"
-      );
-      lapBtn.classList.remove("hidden");
+      currentBackgroundUrl = null; // Clear background URL if clicked outside
+      setBackground();
+      cleanupRainCanvases();
     }
   });
   // Rain toggle logic
@@ -398,34 +462,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (rainToggle.checked) {
       cleanupRainCanvases();
     } else {
-      startRain();
+      if (currentBackgroundUrl) {
+        startRain();
+      }
     }
   });
-
-  // Slider bindings
-  hourSlider.addEventListener("input", () => {
-    hours = parseInt(hourSlider.value);
-    updateDisplay();
-  });
-
-  minuteSlider.addEventListener("input", () => {
-    minutes = parseInt(minuteSlider.value);
-    updateDisplay();
-  });
-
-  secondSlider.addEventListener("input", () => {
-    seconds = parseInt(secondSlider.value);
-    updateDisplay();
-  });
-  // Remove cards button
+  // Remove cards
   removeBtn.addEventListener("click", () => {
     removeCards();
   });
-  // AM/PM toggle button
+  // AM/PM mode toggle
   timeFormatToggle.addEventListener("change", () => {
     isAmPmOn = timeFormatToggle.checked;
   });
-
+  // Info tooltip toggle
   infoToggle.addEventListener("click", () => {
     const info = document.getElementById("infoTooltip");
     info.classList.toggle("hidden");
