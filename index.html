@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -70,29 +70,6 @@
               <input type="number" id="setSeconds" min="0" max="59" placeholder="SS"/>
               <button id="setCountdownBtn">Set</button>
             </div>
-            <!--Circular timer animation-->
-              <div
-              class="circular-timer animatable hidden pointer-events-none translate-y-4 transition-all duration-500 ease-in-out"
-            >
-              <svg>
-                <circle cx="50%" cy="50%" r="90" />
-                <circle cx="50%" cy="50%" r="90" pathLength="1" data-circle />
-                <text x="100" y="100" text-anchor="middle">
-                  <tspan
-                    id="no"
-                    class="font-['Orbitron'] text-3xl fill-white hidden"
-                  >
-                    No
-                  </tspan>
-                  <tspan
-                    id="timeLeft"
-                    class="font-['Orbitron'] text-xl fill-white"
-                  >
-                    time left
-                  </tspan>
-                </text>
-              </svg>
-              </div>
             </div>
             <!-- Laps recordings -->
             <div
@@ -102,7 +79,7 @@
             </div>
             <div class="flex justify-start gap-6 items-center mt-4">
               <!-- Rain Toggle button -->
-              <div class="flex justify-end pb-4">
+              <div class="flex justify-end pb-4" id="rainToggleContainer">
                 <label
                   class="relative inline-block w-30 3xl:w-36 h-10 3xl:h-14 hover:cursor-pointer"
                 >
@@ -132,6 +109,9 @@
               </div>
               <!-- Thumbnail gallery  -->
               <div class="flex space-x-2 mt-2" id="thumbnailsContainer">
+                <div
+                  class="bg-[#0f172a] w-16 h-16 3xl:w-20 3xl:h-20 border border-gray-300 rounded-lg cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                ></div>
                 <img
                   src="/assets/amalfi-night.webp"
                   alt="Background 2"
@@ -164,6 +144,10 @@
                 />
               </div>
             </div>
+            <div
+              id="remainingTimeBar"
+              class="absolute w-full h-10 bottom-0 right-0 bg-[#00ffff] hidden"
+            ></div>
             <audio
               id="beep"
               src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"

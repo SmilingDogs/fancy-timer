@@ -29,9 +29,8 @@ const rainToggle = document.getElementById("rainToggle");
 const recentTimesTitle = document.getElementById("recentTimesTitle");
 const timeFormatElement = document.getElementById("timeFormat");
 const timeFormatToggle = document.getElementById("timeFormatToggle");
+const remainingTimeBar = document.getElementById("remainingTimeBar");
 const infoToggle = document.getElementById("infoToggle");
-const timerElement = document.querySelector(".circular-timer");
-const timerCircle = timerElement.querySelector("[data-circle]");
 // Variables
 let [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
 let timerInterval = null;
@@ -41,71 +40,10 @@ let currentBackgroundUrl = null; // store current background globally
 let particleTimeout = null; // store timeout for particles
 let countdownTimer = null; // store countdown timer globally
 let COUNTDOWN_SECONDS = null; // Change this value to set desired countdown time
-let storedProgress = null; // Progress of the circular timer
 //prettier-ignore
 let prevDigits = {secL: "0", secR: "0", minL: "0", minR: "0", hrL: "0", hrR: "0"};
 
 // Functions
-function initParticles() {
-  if (window.particlesJS) {
-    particlesJS("particles-js", {
-      particles: {
-        number: { value: 50, density: { enable: true, value_area: 800 } },
-        color: { value: "#ffffff" },
-        shape: { type: "circle" },
-        opacity: { value: 0.7, random: false },
-        size: { value: 2, random: true },
-        line_linked: {
-          enable: true,
-          distance: 150,
-          color: "#ffffff",
-          width: 1,
-          opacity: 0.2,
-        },
-        move: {
-          enable: true,
-          speed: 3,
-          direction: "none",
-          random: false,
-          straight: false,
-          out_mode: "out",
-          bounce: false,
-        },
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: {
-            enable: false,
-            mode: "grab",
-          },
-          onclick: {
-            enable: false,
-            mode: "push",
-          },
-          resize: true,
-        },
-        modes: {
-          grab: {
-            distance: 200,
-            line_linked: {
-              opacity: 0.5,
-            },
-          },
-          push: {
-            particles_nb: 4,
-          },
-        },
-      },
-      retina_detect: true,
-    });
-
-    if (particleTimeout) clearTimeout(particleTimeout);
-    particleTimeout = setTimeout(() => {
-      destroyParticles();
-    }, 180000); // Stop after 3 min
-  }
-}
 
 function formatTime(value) {
   return value.toString().padStart(2, "0").split("");
@@ -169,25 +107,18 @@ function runTimer() {
 
 function runCountdown() {
   if (seconds === 0 && minutes === 0 && hours === 0) {
-    timerCircle.style.strokeDashoffset = "1";
-    timerElement.classList.remove("animatable");
     stopTimer();
     rockAndRoll();
-    const no = document.getElementById("no");
-    no.classList.remove("hidden");
     const audio = new Audio(
-      "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
+      "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg",
     );
     audio.play();
     return;
   }
-
-  // Only run circular timer if it's not already running
-  if (!countdownTimer) {
-    runCircularTimer(storedProgress);
-  }
   if (seconds > 0) {
     seconds--;
+    remainingTimeBar.style.width =
+      (seconds / COUNTDOWN_SECONDS) * window.innerWidth + "px";
   } else if (minutes > 0) {
     minutes--;
     seconds = 59;
@@ -216,11 +147,6 @@ function startTimer() {
   if (timerInterval !== null) clearInterval(timerInterval);
   if (countdownTimer !== null) clearInterval(countdownTimer);
 
-  // Start circular timer immediately if in countdown mode
-  if (isCountdown && COUNTDOWN_SECONDS) {
-    runCircularTimer(storedProgress);
-  }
-
   timerInterval = setInterval(() => {
     isCountdown ? runCountdown() : runTimer();
   }, 1000);
@@ -231,10 +157,6 @@ function stopTimer() {
   timerInterval = null;
   clearInterval(countdownTimer);
   countdownTimer = null;
-  // Store current progress when stopping
-  if (isCountdown) {
-    storedProgress = timerCircle.style.strokeDashoffset;
-  }
 }
 
 function clearInputFields() {
@@ -248,19 +170,17 @@ function resetTimer() {
   [seconds, minutes, hours, lapsCount] = [0, 0, 0, 0];
   prevDigits = {secL: "0", secR: "0", minL: "0", minR: "0", hrL: "0", hrR: "0" };
   laps.innerHTML = "";
-  storedProgress = null; 
-  COUNTDOWN_SECONDS = null; 
-  timerCircle.style.strokeDashoffset = 1;
-  document.getElementById("no").classList.add("hidden");
+  COUNTDOWN_SECONDS = null;
   clearInputFields();
   drawCurrentDisplay();
+  remainingTimeBar.style.width = "100%"; 
 }
 
 function toggleCountdown() {
   isCountdown = !isCountdown;
   toggleModeBtn.textContent = isCountdown ? "Timer mode" : "Countdown mode";
   countdownPanel.classList.toggle("show", isCountdown);
-  timerElement.classList.toggle("hidden");
+  remainingTimeBar.classList.toggle("hidden", !isCountdown);
   resetTimer();
 }
 
@@ -294,19 +214,13 @@ function applyCountdownSettings() {
   prevDigits.hrR = hrR;
 
   COUNTDOWN_SECONDS = hours * 3600 + minutes * 60 + seconds;
-  document.getElementById("no").classList.add("hidden");
-
-  // Initialize circular timer with full fill
-  timerCircle.style.strokeDashoffset = "0";
-  timerElement.classList.add("animatable");
-  storedProgress = "0";
 
   drawCurrentDisplay();
 }
 
 function getLaptime() {
   const [h, m, s] = Array.from(document.querySelectorAll(".digit")).map(
-    (digit) => digit.textContent.replace(/\s/g, "")
+    (digit) => digit.textContent.replace(/\s/g, ""),
   );
   const formattedSeconds = s.slice(0, 2) + "." + (s.slice(2) || "0");
   return `${h} h : ${m} m : ${formattedSeconds} s`;
@@ -345,7 +259,7 @@ function cleanupRainCanvases() {
   const rainCanvas =
     document.getElementById("background").previousElementSibling;
   if (rainCanvas) {
-    rainCanvas.remove(); // Remove the canvas element
+    rainCanvas.remove();
   }
 
   setBackground();
@@ -360,54 +274,79 @@ function setBackground() {
       background-position: center;
       background-repeat: no-repeat;
     `;
+    document.getElementById("rainToggleContainer").classList.remove("hidden");
   } else {
     background.style.cssText = `
       background-color: #0f172a;
     `;
+    document.getElementById("rainToggleContainer").classList.add("hidden");
   }
-}
-function updateCircularProgress(remainingSeconds, totalSeconds) {
-  if (remainingSeconds <= 0) {
-    timerElement.classList.remove("animatable");
-    timerCircle.style.strokeDashoffset = "1";
-    return;
-  }
-
-  const progress = remainingSeconds / totalSeconds;
-  timerCircle.style.strokeDashoffset = 1 - progress;
-}
-
-function runCircularTimer(resumeProgress = null) {
-  const totalSeconds = COUNTDOWN_SECONDS;
-  const currentSeconds = hours * 3600 + minutes * 60 + seconds;
-
-  // Update progress immediately
-  if (resumeProgress !== null) {
-    timerCircle.style.strokeDashoffset = resumeProgress;
-  } else {
-    const progress = currentSeconds / totalSeconds;
-    timerCircle.style.strokeDashoffset = 1 - progress;
-  }
-
-  if (countdownTimer) {
-    clearInterval(countdownTimer);
-  }
-
-  // Wait for next countdown tick to start interval
-  setTimeout(() => {
-    countdownTimer = setInterval(() => {
-      const remainingSeconds = hours * 3600 + minutes * 60 + seconds;
-      updateCircularProgress(remainingSeconds, totalSeconds);
-      if (remainingSeconds <= 0) {
-        clearInterval(countdownTimer);
-      }
-    }, 1000);
-  }, 0);
 }
 
 function startRain() {
   cleanupRainCanvases();
   setTimeout(() => rain(), 100);
+}
+
+function initParticles() {
+  if (window.particlesJS) {
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50, density: { enable: true, value_area: 800 } },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.7, random: false },
+        size: { value: 2, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#ffffff",
+          width: 1,
+          opacity: 0.2,
+        },
+        move: {
+          enable: true,
+          speed: 3,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false,
+        },
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: {
+            enable: false,
+            mode: "grab",
+          },
+          onclick: {
+            enable: false,
+            mode: "push",
+          },
+          resize: true,
+        },
+        modes: {
+          grab: {
+            distance: 200,
+            line_linked: {
+              opacity: 0.5,
+            },
+          },
+          push: {
+            particles_nb: 4,
+          },
+        },
+      },
+      retina_detect: true,
+    });
+
+    if (particleTimeout) clearTimeout(particleTimeout);
+    particleTimeout = setTimeout(() => {
+      destroyParticles();
+    }, 180000); // Stop after 3 min
+  }
 }
 
 function destroyParticles() {
@@ -420,7 +359,7 @@ function destroyParticles() {
 function removeCards() {
   const recentTimes = document.getElementById("recentTimes");
   const existingCards = Array.from(
-    recentTimes.querySelectorAll(`[data-country]`)
+    recentTimes.querySelectorAll(`[data-country]`),
   );
 
   existingCards.forEach((card) => {
@@ -512,6 +451,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       };
       testImage.src = `${newBg}?t=${Date.now()}`;
+    } else {
+      currentBackgroundUrl = null; // Clear background URL if clicked outside
+      setBackground();
+      cleanupRainCanvases();
     }
   });
   // Rain toggle logic
